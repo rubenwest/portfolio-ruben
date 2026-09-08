@@ -1,0 +1,131 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { site } from '../content/site';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = `${site.name} — ${site.role}`,
+  description = site.description,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#0a0a0d" />
+    <meta name="generator" content={Astro.generator} />
+
+    <ClientRouter />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <slot />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: 50%;
+        top: -100px;
+        transform: translateX(-50%);
+        z-index: 100;
+        padding: 10px 18px;
+        background: var(--color-accent);
+        color: #fff;
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        transition: top var(--dur-base) var(--ease-out);
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+    </style>
+
+    <script>
+      // Reveal on scroll: se reengancha en cada navegación con View Transitions.
+      let revealObserver: IntersectionObserver | null = null;
+
+      function initReveal(): void {
+        revealObserver?.disconnect();
+
+        const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+        if (targets.length === 0) return;
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          targets.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+
+        revealObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+        );
+
+        targets.forEach((el) => revealObserver!.observe(el));
+      }
+
+      // Dispara las secuencias (terminal, tests, árbol) al entrar en viewport.
+      let sequenceObserver: IntersectionObserver | null = null;
+
+      function initSequences(): void {
+        sequenceObserver?.disconnect();
+
+        const sequences = document.querySelectorAll<HTMLElement>('[data-sequence]');
+        if (sequences.length === 0) return;
+
+        sequenceObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-running');
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.35 },
+        );
+
+        sequences.forEach((el) => sequenceObserver!.observe(el));
+      }
+
+      document.addEventListener('astro:page-load', () => {
+        initReveal();
+        initSequences();
+      });
+
+      document.addEventListener('astro:before-swap', () => {
+        revealObserver?.disconnect();
+        sequenceObserver?.disconnect();
+      });
+    </script>
+  </body>
+</html>

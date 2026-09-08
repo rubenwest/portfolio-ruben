@@ -1,0 +1,215 @@
+---
+import PixelIcon from '../pixel-icons/PixelIcon.astro';
+import ConnectorPath from './ConnectorPath.astro';
+import type { DiagramNode } from './types';
+
+interface Props {
+  nodes: DiagramNode[];
+  class?: string;
+}
+
+const { nodes, class: className } = Astro.props;
+---
+
+<div class:list={['diagram', className]} data-diagram>
+  <svg
+    class="diagram__wires"
+    viewBox="0 0 100 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    {
+      nodes.map((node, index) => (
+        <ConnectorPath
+          x1={node.x}
+          y1={node.y}
+          x2={node.to.x}
+          y2={node.to.y}
+          first={node.first}
+          delay={index * 130}
+        />
+      ))
+    }
+  </svg>
+
+  <ul class="diagram__nodes">
+    {
+      nodes.map((node, index) => (
+        <li
+          class="diagram__node"
+          style={`--x: ${node.x}%; --y: ${node.y}%; --delay: ${index * 130 + 200}ms`}
+        >
+          <PixelIcon name={node.icon} size={24} />
+          <span>{node.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="diagram__card">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .diagram {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(420px, 46vw, 560px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-soft);
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: var(--grid-cell-size) var(--grid-cell-size);
+    overflow: hidden;
+  }
+
+  .diagram__wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .diagram__nodes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .diagram__node {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-2xs) var(--space-sm) var(--space-2xs) var(--space-xs);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+    transition-delay: var(--delay);
+  }
+
+  .diagram.is-drawn .diagram__node {
+    opacity: 1;
+  }
+
+  .diagram__card {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(430px, calc(100% - 3rem));
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* En pantallas estrechas los conectores estorban: chips arriba y card debajo. */
+  @media (max-width: 820px) {
+    .diagram {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+    }
+
+    .diagram__wires {
+      display: none;
+    }
+
+    .diagram__nodes {
+      position: static;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      justify-content: center;
+    }
+
+    .diagram__node {
+      position: static;
+      transform: none;
+      opacity: 1;
+    }
+
+    .diagram__card {
+      position: static;
+      transform: none;
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .diagram__node {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  let observers: IntersectionObserver[] = [];
+
+  function setup(): void {
+    observers.forEach((observer) => observer.disconnect());
+    observers = [];
+
+    const diagrams = document.querySelectorAll<HTMLElement>('[data-diagram]');
+
+    diagrams.forEach((diagram) => {
+      const paths = Array.from(
+        diagram.querySelectorAll<SVGPathElement>('[data-connector]'),
+      );
+
+      // Estado inicial: el trazo existe pero está desplazado fuera del path.
+      paths.forEach((path) => {
+        const length = path.getTotalLength();
+        path.style.strokeDasharray = `${length}`;
+        path.style.strokeDashoffset = `${length}`;
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            paths.forEach((path) => {
+              path.style.strokeDashoffset = '0';
+            });
+            diagram.classList.add('is-drawn');
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.25 },
+      );
+
+      observer.observe(diagram);
+      observers.push(observer);
+    });
+  }
+
+  document.addEventListener('astro:page-load', setup);
+  document.addEventListener('astro:before-swap', () => {
+    observers.forEach((observer) => observer.disconnect());
+    observers = [];
+  });
+</script>

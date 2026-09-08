@@ -1,0 +1,299 @@
+---
+interface Props {
+  /** Columnas base de la rejilla en desktop. */
+  columns?: number;
+  class?: string;
+}
+
+const { columns = 8, class: className } = Astro.props;
+---
+
+<div class:list={['mosaic', className]} data-mosaic data-columns={columns}>
+  <canvas data-mosaic-canvas aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .mosaic {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    /* El texto del hero vive encima: difuminamos el mosaico hacia el fondo. */
+    -webkit-mask-image: radial-gradient(
+      120% 90% at 78% 30%,
+      #000 0%,
+      #000 34%,
+      transparent 76%
+    );
+    mask-image: radial-gradient(
+      120% 90% at 78% 30%,
+      #000 0%,
+      #000 34%,
+      transparent 76%
+    );
+  }
+
+  .mosaic canvas {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  interface Tile {
+    col: number;
+    row: number;
+    w: number;
+    h: number;
+    color: string;
+    alpha: number;
+  }
+
+  interface Morph {
+    tile: number;
+    start: number;
+    duration: number;
+  }
+
+  const MIN_GAP_MS = 2000;
+  const MAX_GAP_MS = 4000;
+  const MIN_MORPH_MS = 600;
+  const MAX_MORPH_MS = 800;
+
+  let teardown: (() => void) | null = null;
+
+  const rand = (min: number, max: number) => min + Math.random() * (max - min);
+  const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1));
+
+  /** ease-in-out-cubic */
+  const easeInOutCubic = (t: number) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  function readPalette(): string[] {
+    const styles = getComputedStyle(document.documentElement);
+    const tones = ['--mosaic-1', '--mosaic-2', '--mosaic-3', '--mosaic-4', '--mosaic-5']
+      .map((token) => styles.getPropertyValue(token).trim())
+      .filter(Boolean);
+
+    return tones.length ? tones : ['#7b61ff', '#5b4bd6', '#22d3ee', '#3b6ef6', '#a78bfa'];
+  }
+
+  /** Rectángulo redondeado con fallback para navegadores sin ctx.roundRect. */
+  function roundedRect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+  ): void {
+    const radius = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+
+    if (typeof ctx.roundRect === 'function') {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, radius);
+      return;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  /**
+   * Genera la rejilla base y fusiona celdas adyacentes en rectángulos
+   * irregulares (1x1, 1x2, 2x1, 2x2) hasta cubrir todo el lienzo.
+   */
+  function buildTiles(cols: number, rows: number, palette: string[]): Tile[] {
+    const taken: boolean[] = new Array(cols * rows).fill(false);
+    const at = (c: number, r: number) => taken[r * cols + c];
+    const tiles: Tile[] = [];
+
+    const fits = (c: number, r: number, w: number, h: number) => {
+      if (c + w > cols || r + h > rows) return false;
+      for (let y = r; y < r + h; y += 1) {
+        for (let x = c; x < c + w; x += 1) {
+          if (at(x, y)) return false;
+        }
+      }
+      return true;
+    };
+
+    // Candidatos de fusión, de mayor a menor, con su probabilidad.
+    const candidates: Array<[number, number, number]> = [
+      [2, 2, 0.16],
+      [2, 1, 0.22],
+      [1, 2, 0.22],
+    ];
+
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        if (at(c, r)) continue;
+
+        let w = 1;
+        let h = 1;
+        for (const [cw, ch, weight] of candidates) {
+          if (Math.random() < weight && fits(c, r, cw, ch)) {
+            w = cw;
+            h = ch;
+            break;
+          }
+        }
+
+        for (let y = r; y < r + h; y += 1) {
+          for (let x = c; x < c + w; x += 1) {
+            taken[y * cols + x] = true;
+          }
+        }
+
+        const color = palette[randInt(0, palette.length - 1)] ?? palette[0]!;
+        tiles.push({ col: c, row: r, w, h, color, alpha: rand(0.3, 1) });
+      }
+    }
+
+    return tiles;
+  }
+
+  function setup(): void {
+    teardown?.();
+
+    const root = document.querySelector<HTMLElement>('[data-mosaic]');
+    const canvas = root?.querySelector<HTMLCanvasElement>('[data-mosaic-canvas]');
+    const ctx = canvas?.getContext('2d');
+    if (!root || !canvas || !ctx) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const palette = readPalette();
+
+    let width = 0;
+    let height = 0;
+    let cellW = 0;
+    let cellH = 0;
+    let gap = 0;
+    let tiles: Tile[] = [];
+    let morphs: Morph[] = [];
+    let nextEventAt = 0;
+    let frame = 0;
+    let resizeTimer = 0;
+
+    function layout(): void {
+      const rect = root!.getBoundingClientRect();
+      width = Math.max(1, Math.round(rect.width));
+      height = Math.max(1, Math.round(rect.height));
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas!.width = Math.round(width * dpr);
+      canvas!.height = Math.round(height * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const base = Number(root!.dataset.columns ?? 8);
+      const cols = width < 640 ? Math.max(4, Math.round(base / 2)) : base;
+      cellW = width / cols;
+      const rows = Math.max(1, Math.ceil(height / cellW));
+      cellH = height / rows;
+      gap = Math.max(4, Math.round(cellW * 0.07));
+
+      tiles = buildTiles(cols, rows, palette);
+      morphs = [];
+      nextEventAt = performance.now() + rand(MIN_GAP_MS, MAX_GAP_MS);
+    }
+
+    function drawTile(tile: Tile, morph: number): void {
+      const x = tile.col * cellW + gap / 2;
+      const y = tile.row * cellH + gap / 2;
+      const w = tile.w * cellW - gap;
+      const h = tile.h * cellH - gap;
+      if (w <= 0 || h <= 0) return;
+
+      // Al girar 45° el cuadrado se saldría de su casilla: lo compensa la escala.
+      const scale = 1 - morph * 0.28;
+      const radius = Math.min(w, h) * (0.12 + morph * 0.26);
+
+      ctx!.save();
+      ctx!.translate(x + w / 2, y + h / 2);
+      ctx!.rotate(morph * (Math.PI / 4));
+      ctx!.scale(scale, scale);
+      ctx!.globalAlpha = tile.alpha;
+      ctx!.fillStyle = tile.color;
+
+      if (morph > 0) {
+        ctx!.shadowColor = tile.color;
+        ctx!.shadowBlur = 24 * morph;
+      }
+
+      roundedRect(ctx!, -w / 2, -h / 2, w, h, radius);
+      ctx!.fill();
+      ctx!.restore();
+    }
+
+    function render(now: number): void {
+      ctx!.clearRect(0, 0, width, height);
+
+      if (!reduceMotion) {
+        if (now >= nextEventAt) {
+          const count = randInt(1, 2);
+          for (let i = 0; i < count; i += 1) {
+            const index = randInt(0, tiles.length - 1);
+            if (morphs.some((m) => m.tile === index)) continue;
+            morphs.push({
+              tile: index,
+              start: now,
+              duration: rand(MIN_MORPH_MS, MAX_MORPH_MS),
+            });
+          }
+          nextEventAt = now + rand(MIN_GAP_MS, MAX_GAP_MS);
+        }
+
+        morphs = morphs.filter((m) => now - m.start < m.duration);
+      }
+
+      const amounts = new Map<number, number>();
+      for (const m of morphs) {
+        const progress = (now - m.start) / m.duration;
+        // Ida y vuelta: 0 → 1 → 0
+        const pingPong = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+        amounts.set(m.tile, easeInOutCubic(pingPong));
+      }
+
+      tiles.forEach((tile, index) => drawTile(tile, amounts.get(index) ?? 0));
+    }
+
+    function loop(now: number): void {
+      render(now);
+      frame = requestAnimationFrame(loop);
+    }
+
+    function onResize(): void {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        layout();
+        if (reduceMotion) render(performance.now());
+      }, 150);
+    }
+
+    layout();
+
+    if (reduceMotion) {
+      render(performance.now());
+    } else {
+      frame = requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', onResize);
+
+    teardown = () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
+      teardown = null;
+    };
+  }
+
+  document.addEventListener('astro:page-load', setup);
+  // Astro no tiene ciclo de vida: limpiamos antes de cada View Transition.
+  document.addEventListener('astro:before-swap', () => teardown?.());
+</script>

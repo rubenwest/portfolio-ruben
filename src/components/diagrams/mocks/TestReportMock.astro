@@ -1,0 +1,105 @@
+---
+const suites = [
+  { name: 'solicitud.component.spec.ts', count: 12 },
+  { name: 'expediente.store.spec.ts', count: 9 },
+  { name: 'firma.e2e.cy.ts', count: 6 },
+  { name: 'a11y.axe.cy.ts', count: 4 },
+];
+
+const total = suites.reduce((sum, suite) => sum + suite.count, 0);
+---
+
+<div class="report" data-sequence style="--step: 320ms">
+  <p class="report__caption">CI · pipeline de calidad</p>
+
+  <ul class="report__list">
+    {
+      suites.map((suite, index) => (
+        <li class="report__row" data-step style={`--i: ${index}`}>
+          <span class="report__check" aria-hidden="true">✔</span>
+          <span class="report__name">{suite.name}</span>
+          <span class="report__count">{suite.count}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="report__summary" data-step style={`--i: ${suites.length}`}>
+    <strong>{total} passed</strong> · 0 failed · 3.4s
+  </p>
+</div>
+
+<style>
+  .report {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .report__caption {
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-sm);
+  }
+
+  .report__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .report__row {
+    display: grid;
+    grid-template-columns: 1rem 1fr auto;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-block: 2px;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+    transition-delay: calc(var(--i) * var(--step));
+  }
+
+  .report__check { color: var(--color-success); }
+
+  .report__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .report__count {
+    color: var(--color-text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .report__summary {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-dim);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+    transition-delay: calc(var(--i) * var(--step));
+  }
+
+  .report__summary strong { color: var(--color-success); }
+
+  [data-sequence].is-running .report__row,
+  [data-sequence].is-running .report__summary {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .report__row,
+    .report__summary {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,151 @@
+---
+import MosaicCanvas from './MosaicCanvas.astro';
+import { site } from '../../content/site';
+---
+
+<section class="hero" id="top">
+  <MosaicCanvas columns={8} />
+
+  <div class="container hero__inner">
+    <p class="eyebrow" data-reveal>{site.location} · disponible para proyectos</p>
+
+    <h1 class="hero__title" data-reveal style="--reveal-delay: 80ms">
+      Construyo el <span class="hero__accent">frontend</span> de productos
+      que tienen que aguantar producción.
+    </h1>
+
+    <p class="hero__lead lead" data-reveal style="--reveal-delay: 160ms">
+      {site.role}. Arquitectura con Angular y microfrontends, desarrollo
+      asistido por IA como forma de trabajar hoy, y una década de fondo
+      construyendo sistemas donde un fallo se nota.
+    </p>
+
+    <div class="hero__actions" data-reveal style="--reveal-delay: 240ms">
+      <a class="btn btn--primary" href="#experiencia">Ver experiencia</a>
+      <a class="btn btn--ghost" href={`mailto:${site.email}`}>
+        Escríbeme
+        <span class="btn__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#como-trabajo" aria-label="Bajar a la siguiente sección">
+    <span></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: var(--space-3xl);
+    overflow: hidden;
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 62ch;
+  }
+
+  .hero__title {
+    font-size: var(--fs-hero);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero__accent {
+    background: linear-gradient(120deg, var(--color-accent-3), var(--color-accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__lead {
+    margin-bottom: var(--space-xl);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 12px 22px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .btn--primary {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .btn--primary:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--color-accent) 88%, white);
+  }
+
+  .btn--ghost {
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+  }
+
+  .btn--ghost:hover {
+    border-color: var(--color-accent-2);
+  }
+
+  .btn__arrow {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .btn--ghost:hover .btn__arrow {
+    transform: translateX(4px);
+  }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 24px;
+    height: 38px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    display: grid;
+    place-items: start center;
+    padding-top: 6px;
+  }
+
+  .hero__scroll span {
+    width: 3px;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-2);
+    animation: scroll-hint 1.6s var(--ease-in-out) infinite;
+  }
+
+  @keyframes scroll-hint {
+    0% { transform: translateY(0); opacity: 1; }
+    70% { transform: translateY(12px); opacity: 0; }
+    71% { transform: translateY(0); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__scroll span { animation: none; }
+  }
+</style>

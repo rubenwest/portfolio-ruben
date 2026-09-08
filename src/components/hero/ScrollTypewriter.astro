@@ -1,0 +1,251 @@
+---
+interface Props {
+  /**
+   * Titular a revelar. Los fragmentos entre asteriscos se pintan con el color
+   * de acento: `Construyo *interfaces* que aguantan producción`.
+   */
+  text: string;
+  /** Frase que aparece al completar el reveal. */
+  footnote?: string;
+  /** Altura del contenedor scrollable (multiplicador de viewport). */
+  scrollHeight?: string;
+  class?: string;
+}
+
+const { text, footnote, scrollHeight = '220vh', class: className } = Astro.props;
+
+/** Divide el texto en segmentos, alternando normal / acentuado. */
+const segments = text.split('*').map((value, index) => ({
+  value,
+  accent: index % 2 === 1,
+}));
+
+/** Caracteres planos, para poder numerarlos globalmente. */
+let charIndex = -1;
+const parts = segments.map((segment) => ({
+  accent: segment.accent,
+  chars: [...segment.value].map((char) => {
+    charIndex += 1;
+    return { char, index: charIndex };
+  }),
+}));
+
+const total = charIndex + 1;
+---
+
+<section
+  class:list={['typewriter', className]}
+  style={`--scroll-height: ${scrollHeight}`}
+  data-typewriter
+  data-total={total}
+>
+  <div class="typewriter__sticky">
+    <h2 class="typewriter__text">
+      <span class="visually-hidden">{text.replaceAll('*', '')}</span>
+      <span aria-hidden="true">
+        {
+          parts.map((part) => (
+            <span class:list={['typewriter__seg', part.accent && 'is-accent']}>
+              {part.chars.map(({ char, index }) =>
+                char === ' ' ? (
+                  <span class="typewriter__char" data-char={index}>&nbsp;</span>
+                ) : (
+                  <span class="typewriter__char" data-char={index}>{char}</span>
+                ),
+              )}
+            </span>
+          ))
+        }
+      </span>
+    </h2>
+
+    {footnote && <p class="typewriter__footnote" data-typewriter-footnote>{footnote}</p>}
+
+    <div class="typewriter__progress" aria-hidden="true">
+      <span data-typewriter-bar></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .typewriter {
+    height: var(--scroll-height);
+    position: relative;
+  }
+
+  .typewriter__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+    padding-inline: var(--gutter);
+    text-align: center;
+  }
+
+  .typewriter__text {
+    font-size: clamp(1.9rem, 5.2vw, 4.25rem);
+    max-width: 20ch;
+    letter-spacing: -0.035em;
+  }
+
+  .typewriter__seg.is-accent {
+    color: var(--color-accent-3);
+  }
+
+  .typewriter__char {
+    opacity: 0.12;
+    transition: opacity 0.35s var(--ease-out), filter 0.35s var(--ease-out);
+    filter: blur(2px);
+  }
+
+  .typewriter__char.is-on {
+    opacity: 1;
+    filter: none;
+  }
+
+  .typewriter__footnote {
+    color: var(--color-text-muted);
+    max-width: 46ch;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+
+  .typewriter__footnote.is-on {
+    opacity: 1;
+    transform: none;
+  }
+
+  .typewriter__progress {
+    width: min(320px, 60vw);
+    height: 2px;
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .typewriter__progress span {
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typewriter {
+      height: auto;
+    }
+
+    .typewriter__sticky {
+      position: static;
+      height: auto;
+      padding-block: var(--space-3xl);
+    }
+
+    .typewriter__char,
+    .typewriter__footnote {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    .typewriter__progress {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  let teardown: (() => void) | null = null;
+
+  function setup(): void {
+    teardown?.();
+
+    const section = document.querySelector<HTMLElement>('[data-typewriter]');
+    if (!section) return;
+
+    const sticky = section.querySelector<HTMLElement>('.typewriter__sticky');
+    const chars = Array.from(
+      section.querySelectorAll<HTMLElement>('.typewriter__char'),
+    );
+    const footnote = section.querySelector<HTMLElement>('[data-typewriter-footnote]');
+    const bar = section.querySelector<HTMLElement>('[data-typewriter-bar]');
+    if (!sticky || chars.length === 0) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      chars.forEach((char) => char.classList.add('is-on'));
+      footnote?.classList.add('is-on');
+      return;
+    }
+
+    let visible = 0;
+    let ticking = false;
+    let inView = false;
+
+    function update(): void {
+      ticking = false;
+
+      const rect = section!.getBoundingClientRect();
+      const travel = rect.height - sticky!.offsetHeight;
+      if (travel <= 0) return;
+
+      const raw = -rect.top / travel;
+      const progress = Math.min(1, Math.max(0, raw));
+
+      // El reveal termina al 85% del recorrido: deja aire antes de salir.
+      const revealed = Math.floor(
+        Math.min(1, progress / 0.85) * chars.length,
+      );
+
+      if (revealed !== visible) {
+        const from = Math.min(visible, revealed);
+        const to = Math.max(visible, revealed);
+        for (let i = from; i < to; i += 1) {
+          chars[i]?.classList.toggle('is-on', i < revealed);
+        }
+        visible = revealed;
+      }
+
+      footnote?.classList.toggle('is-on', progress > 0.88);
+      bar?.style.setProperty('--progress', String(progress));
+    }
+
+    function onScroll(): void {
+      if (ticking || !inView) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    // Solo escuchamos el scroll mientras la sección está en pantalla.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) onScroll();
+      },
+      { rootMargin: '100px 0px' },
+    );
+    observer.observe(section);
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+
+    teardown = () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      teardown = null;
+    };
+  }
+
+  document.addEventListener('astro:page-load', setup);
+  document.addEventListener('astro:before-swap', () => teardown?.());
+</script>

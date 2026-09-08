@@ -1,0 +1,91 @@
+---
+import { site } from '../../content/site';
+---
+
+<header class="header" transition:name="site-header" transition:persist>
+  <div class="container header__inner">
+    <a class="header__brand" href="#top">
+      <span class="header__mark" aria-hidden="true"></span>
+      {site.name}
+    </a>
+
+    <nav class="header__nav" aria-label="Navegación principal">
+      {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <a class="header__cta" href={`mailto:${site.email}`}>Hablemos</a>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    height: 64px;
+  }
+
+  .header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .header__mark {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+    box-shadow: 0 0 12px -2px var(--color-accent);
+  }
+
+  .header__nav {
+    display: flex;
+    gap: var(--space-lg);
+    margin-left: auto;
+    font-size: var(--fs-small);
+  }
+
+  .header__nav a {
+    color: var(--color-text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .header__nav a:hover {
+    color: var(--color-text);
+  }
+
+  .header__cta {
+    padding: 8px 16px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+
+  .header__cta:hover {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  @media (max-width: 720px) {
+    .header__nav {
+      display: none;
+    }
+  }
+</style>

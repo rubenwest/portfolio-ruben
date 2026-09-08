@@ -1,0 +1,53 @@
+---
+import { ICON_SIZE, toCells, type PixelIconName } from './icon-data';
+
+interface Props {
+  name: PixelIconName;
+  /** Lado del icono en px (múltiplo de 8 para que los píxeles caigan enteros). */
+  size?: number;
+  /** Etiqueta accesible; si se omite el icono es decorativo. */
+  label?: string;
+  class?: string;
+}
+
+const { name, size = 32, label, class: className } = Astro.props;
+const cells = toCells(name);
+const decorative = !label;
+---
+
+<svg
+  class:list={['pixel-icon', className]}
+  width={size}
+  height={size}
+  viewBox={`0 0 ${ICON_SIZE} ${ICON_SIZE}`}
+  shape-rendering="crispEdges"
+  role={decorative ? 'presentation' : 'img'}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={label}
+  data-icon={name}
+>
+  {label && <title>{label}</title>}
+  {
+    cells.map((cell) => (
+      <rect x={cell.x} y={cell.y} width="1" height="1" class={`t${cell.tone}`} />
+    ))
+  }
+</svg>
+
+<style>
+  .pixel-icon {
+    /* Tonos sobrescribibles desde el contenedor */
+    --pixel-1: var(--color-text);
+    --pixel-2: var(--color-accent-2);
+    --pixel-3: var(--color-accent-3);
+
+    display: block;
+    flex: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .t1 { fill: var(--pixel-1); }
+  .t2 { fill: var(--pixel-2); }
+  .t3 { fill: var(--pixel-3); }
+</style>

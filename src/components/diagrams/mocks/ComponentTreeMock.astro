@@ -1,0 +1,128 @@
+---
+const shell = 'shell-app';
+const remotes = ['mf-tramites', 'mf-expedientes', 'mf-firma'];
+const shared = 'ui-kit · design tokens';
+---
+
+<div class="tree" data-sequence style="--step: 260ms">
+  <p class="tree__caption">Composición en runtime</p>
+
+  <div class="tree__shell" data-step style="--i: 0">
+    <span class="tree__dot" aria-hidden="true"></span>
+    {shell}
+  </div>
+
+  <div class="tree__rail" data-step style="--i: 1" aria-hidden="true"></div>
+
+  <ul class="tree__remotes">
+    {
+      remotes.map((remote, index) => (
+        <li class="tree__remote" data-step style={`--i: ${index + 2}`}>
+          {remote}
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="tree__shared" data-step style={`--i: ${remotes.length + 2}`}>
+    {shared}
+  </div>
+</div>
+
+<style>
+  .tree {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-xs);
+  }
+
+  .tree__caption {
+    font-size: var(--fs-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-xs);
+  }
+
+  .tree__shell,
+  .tree__remote,
+  .tree__shared {
+    padding: var(--space-2xs) var(--space-sm);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+    transition-delay: calc(var(--i) * var(--step));
+  }
+
+  .tree__shell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .tree__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+  }
+
+  .tree__rail {
+    width: 70%;
+    height: 14px;
+    border-left: 1px solid var(--color-border-strong);
+    border-right: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+    transition-delay: calc(var(--i) * var(--step));
+  }
+
+  .tree__remotes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+
+  .tree__remote {
+    color: var(--color-text-muted);
+  }
+
+  .tree__shared {
+    margin-top: var(--space-sm);
+    border-style: dashed;
+    color: var(--color-accent-2);
+    background: transparent;
+  }
+
+  [data-sequence].is-running .tree__shell,
+  [data-sequence].is-running .tree__remote,
+  [data-sequence].is-running .tree__shared,
+  [data-sequence].is-running .tree__rail {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tree__shell,
+    .tree__remote,
+    .tree__shared,
+    .tree__rail {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

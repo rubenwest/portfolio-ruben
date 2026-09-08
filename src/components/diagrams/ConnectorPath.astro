@@ -1,0 +1,58 @@
+---
+interface Props {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  /** Primer tramo del recorrido. Nunca se dibujan diagonales. */
+  first?: 'h' | 'v';
+  /** Retardo del dibujado, en ms. */
+  delay?: number;
+}
+
+const { x1, y1, x2, y2, first = 'h', delay = 0 } = Astro.props;
+
+const d =
+  first === 'h'
+    ? `M ${x1} ${y1} L ${x2} ${y1} L ${x2} ${y2}`
+    : `M ${x1} ${y1} L ${x1} ${y2} L ${x2} ${y2}`;
+---
+
+<g class="connector" style={`--delay: ${delay}ms`}>
+  <path d={d} data-connector vector-effect="non-scaling-stroke" />
+  <circle cx={x1} cy={y1} r="0.7" vector-effect="non-scaling-stroke" />
+</g>
+
+<style>
+  .connector path {
+    fill: none;
+    stroke: var(--color-border-strong);
+    stroke-width: 1;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    transition: stroke-dashoffset 1.1s var(--ease-out);
+    transition-delay: var(--delay);
+  }
+
+  .connector circle {
+    fill: var(--color-accent-2);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+    transition-delay: calc(var(--delay) + 500ms);
+  }
+
+  :global(.is-drawn) .connector circle {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .connector path {
+      stroke-dasharray: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+
+    .connector circle {
+      opacity: 1;
+    }
+  }
+</style>

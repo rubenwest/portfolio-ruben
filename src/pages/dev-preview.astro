@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import MosaicCanvas from '../components/hero/MosaicCanvas.astro';
+import ScrollTypewriter from '../components/hero/ScrollTypewriter.astro';
+import PixelIcon from '../components/pixel-icons/PixelIcon.astro';
+import { icons, type PixelIconName } from '../components/pixel-icons/icon-data';
+
+const iconNames = Object.keys(icons) as PixelIconName[];
+---
+
+<Base title="Dev preview — piezas aisladas">
+  <main class="dev">
+    <section class="dev__block">
+      <p class="eyebrow">Pieza 1</p>
+      <h1>MosaicCanvas</h1>
+      <div class="dev__stage">
+        <MosaicCanvas columns={8} />
+      </div>
+    </section>
+
+    <section class="dev__block">
+      <p class="eyebrow">Pieza 2</p>
+      <h1>PixelIcon (8×8)</h1>
+      <ul class="dev__icons">
+        {
+          iconNames.map((name) => (
+            <li>
+              <PixelIcon name={name} size={48} label={name} />
+              <code>{name}</code>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="dev__block">
+      <p class="eyebrow">Pieza 3</p>
+      <h1>ScrollTypewriter</h1>
+    </section>
+
+    <ScrollTypewriter
+      text="Prueba de *reveal* ligado al *scroll*."
+      footnote="Esta frase aparece al completar el recorrido."
+    />
+  </main>
+</Base>
+
+<style>
+  .dev {
+    padding-block: var(--space-2xl);
+  }
+
+  .dev__block {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .dev__block h1 {
+    font-size: var(--fs-h2);
+    margin-block: var(--space-xs) var(--space-lg);
+  }
+
+  .dev__stage {
+    position: relative;
+    height: 60vh;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .dev__icons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+  }
+
+  .dev__icons li {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-xs);
+  }
+
+  .dev__icons code {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--color-text-dim);
+  }
+</style>

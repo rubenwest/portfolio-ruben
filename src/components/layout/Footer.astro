@@ -1,0 +1,90 @@
+---
+import { site } from '../../content/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <p class="footer__name">{site.name}</p>
+      <p class="footer__role">{site.role} · {site.location}</p>
+    </div>
+
+    <nav class="footer__links" aria-label="Enlaces">
+      {
+        site.socials.map((social) => (
+          <a href={social.href} target="_blank" rel="noopener noreferrer">
+            {social.label}
+            <span aria-hidden="true">↗</span>
+          </a>
+        ))
+      }
+      <a href={`mailto:${site.email}`}>Email</a>
+    </nav>
+  </div>
+
+  <div class="container footer__legal">
+    <span>© {year} {site.name}</span>
+    <span>Hecho con Astro · Canvas 2D · sin frameworks de animación</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-2xl) var(--space-xl);
+    margin-top: var(--space-3xl);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg) var(--space-2xl);
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .footer__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+  }
+
+  .footer__role {
+    color: var(--color-text-dim);
+    font-size: var(--fs-small);
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    font-size: var(--fs-small);
+  }
+
+  .footer__links a {
+    color: var(--color-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .footer__links a:hover {
+    color: var(--color-accent-2);
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-lg);
+    justify-content: space-between;
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--color-text-dim);
+  }
+</style>
