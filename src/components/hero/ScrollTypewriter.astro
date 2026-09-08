@@ -48,7 +48,7 @@ const total = charIndex + 1;
             <span class:list={['typewriter__seg', part.accent && 'is-accent']}>
               {part.chars.map(({ char, index }) =>
                 char === ' ' ? (
-                  <span class="typewriter__char" data-char={index}>&nbsp;</span>
+                  <span class="typewriter__char" data-char={index}>{' '}</span>
                 ) : (
                   <span class="typewriter__char" data-char={index}>{char}</span>
                 ),

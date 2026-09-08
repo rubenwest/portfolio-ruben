@@ -1,0 +1,24 @@
+---
+import PixelIcon from '../pixel-icons/PixelIcon.astro';
+import type { StackCategory } from '../../content/stack';
+interface Props { category: StackCategory; index: number; }
+const { category, index } = Astro.props;
+const colors = ['#ff5100', '#159bd7', '#ffc043', '#ed663b'];
+---
+<div class={`stack-piece stack-piece--${index}`} data-scroll-piece style={`--piece-index:${index};--flip-color:${colors[index]}`}>
+  <article class="flip-card" data-flip-card>
+    <div class="flip-card__rotor">
+      <div class="flip-card__front" data-flip-front>
+        <div class="flip-card__icon"><PixelIcon name={category.icon} size={28}/></div>
+        <span class="flip-card__number">0{index+1}</span>
+        <div class="flip-card__heading"><h2>{category.title}</h2><p>{category.description}</p></div>
+        <span class="flip-card__hint" aria-hidden="true">Explorar +</span>
+      </div>
+      <div class="flip-card__back" data-flip-back id={`stack-tools-${index}`}>
+        <h2>{category.title}</h2>
+        <ul>{category.items.map(item=><li>{item}</li>)}</ul>
+      </div>
+    </div>
+    <button class="flip-card__trigger" type="button" aria-label={`Ver herramientas de ${category.title}`} aria-expanded="false" aria-controls={`stack-tools-${index}`}><span class="visually-hidden">Ver herramientas de {category.title}</span></button>
+  </article>
+</div>

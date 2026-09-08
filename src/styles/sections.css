@@ -1,0 +1,210 @@
+
+  .section--alt {
+    background: var(--color-bg-soft);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .section__head {
+    max-width: var(--max-width-prose);
+    display: grid;
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section__head h2 {
+    font-size: var(--fs-h2);
+  }
+
+  /* ---- capas "cómo trabajo" ---- */
+  .capas {
+    display: grid;
+    gap: var(--space-3xl);
+  }
+
+  .capa {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  .capa--reverse .capa__text {
+    order: 2;
+  }
+
+  .capa__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--color-accent);
+    letter-spacing: 0.1em;
+  }
+
+  .capa__text h3 {
+    font-size: var(--fs-h3);
+    margin-block: var(--space-sm) var(--space-md);
+  }
+
+  .capa__text p {
+    color: var(--color-text-muted);
+  }
+
+  /* ---- stack ---- */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .stack-card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+
+  .stack-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-border-strong);
+  }
+
+  .stack-card__icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent-soft);
+    margin-bottom: var(--space-xs);
+  }
+
+  .stack-card h3 {
+    font-size: 1.15rem;
+  }
+
+  .stack-card__desc {
+    color: var(--color-text-dim);
+    font-size: var(--fs-small);
+  }
+
+  .stack-card__items {
+    list-style: none;
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .stack-card__items li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+  }
+
+  .stack-card__items li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-accent-2);
+  }
+
+  /* ---- timeline ---- */
+  .timeline {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  /* ---- comunidad ---- */
+  .community {
+    display: flex;
+    gap: var(--space-xl);
+    align-items: flex-start;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  .community__icon {
+    flex: none;
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+  }
+
+  .community h2 {
+    font-size: var(--fs-h3);
+    margin-block: var(--space-2xs) var(--space-sm);
+  }
+
+  .community__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-md);
+    color: var(--color-accent-2);
+    font-size: var(--fs-small);
+  }
+
+  .community__link span {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .community__link:hover span {
+    transform: translateX(4px);
+  }
+
+  /* ---- cta final ---- */
+  .cta__inner {
+    text-align: center;
+    display: grid;
+    gap: var(--space-md);
+    justify-items: center;
+  }
+
+  .cta__inner h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .btn-cta {
+    margin-top: var(--space-sm);
+    padding: 14px 28px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(120deg, var(--color-accent), var(--color-accent-2));
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  .btn-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  @media (max-width: 820px) {
+    .capa {
+      grid-template-columns: 1fr;
+    }
+
+    .capa--reverse .capa__text {
+      order: 0;
+    }
+
+    .community {
+      flex-direction: column;
+    }
+  }

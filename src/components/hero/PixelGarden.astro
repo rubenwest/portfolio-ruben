@@ -1,0 +1,28 @@
+---
+const tiles = Array.from({length:48},(_,i)=>({tone:(i*7+Math.floor(i/8)*3)%5,delay:-(i%9)*1.3}));
+---
+<div class="garden" aria-hidden="true">
+  <div class="garden__tiles">{tiles.map(({tone,delay})=><span class={`tile tone-${tone}`} style={`--delay:${delay}s`}/>)}</div>
+  <span class="garden__label">CRAFTED WITH CODE / ALMERÍA, ES</span>
+  <div class="cat cat--walk"><svg viewBox="0 0 20 20" shape-rendering="crispEdges"><g fill="currentColor"><path d="M3 7h2V3h2v2h4V3h2v8H5V9H3zM5 11h10v5H5zM15 9h2v5h-2zM17 7h2v4h-2z"/><path class="legs" d="M5 15h3v4H5zM12 15h3v4h-3z"/></g><path fill="#ffda83" d="M6 7h2v2H6zM10 7h2v2h-2z"/></svg></div>
+  <div class="cat cat--sit"><img src="/images/cat-sitting-black.gif" alt="" width="64" height="64" loading="lazy" /><svg class="cat__still" viewBox="0 0 20 20" shape-rendering="crispEdges"><path fill="currentColor" d="M4 1h3v3h6V1h3v10h-3v5h3v2H4v-2h3v-5H4zM16 12h2v4h-2z"/></svg></div>
+  <span class="garden__cross garden__cross--one">+</span><span class="garden__cross garden__cross--two">+</span>
+</div>
+<style>
+ .garden{position:relative;min-height:340px;overflow:hidden;background:#ff5100;color:#111;isolation:isolate}
+ .garden__tiles{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(6,1fr)}
+ .tile{background:var(--tone);animation:pixel-shift 11s steps(1,end) infinite;animation-delay:var(--delay);border:1px solid #00000005;transform-origin:50% 50%}
+ .tone-0{--tone:#ff5100}.tone-1{--tone:#ff8200}.tone-2{--tone:#ee2600}.tone-3{--tone:#c40025}.tone-4{--tone:#ffb000}
+ .garden__label{position:absolute;left:1.5rem;top:1.5rem;font:10px var(--font-mono);letter-spacing:.07em}
+ .garden__cross{position:absolute;font:24px var(--font-mono)}.garden__cross--one{top:33%;left:25%}.garden__cross--two{bottom:15%;right:12%}
+ .cat{position:absolute;width:56px;height:56px;filter:drop-shadow(0 3px 0 #00000012)}
+ .cat--walk{bottom:18%;left:0;animation:cat-walk 20s linear infinite}
+ .cat--walk svg{animation:cat-bounce .4s steps(2,end) infinite}.legs{animation:cat-step .4s steps(2,end) infinite;transform-origin:center}
+ .cat--sit{right:12%;top:24%;width:64px;height:64px}.cat--sit img{image-rendering:pixelated}.cat__still{display:none}
+ @keyframes pixel-shift{0%,100%{filter:none;transform:scale(1)}30%,55%{filter:brightness(1.12);transform:scale(1)}65%{filter:none;transform:scale(.78) rotate(90deg)}75%{filter:none;transform:scale(1)}}
+ @keyframes cat-walk{0%{left:-8%;transform:scaleX(1)}45%,49%{left:83%;transform:scaleX(1)}50%,95%{transform:scaleX(-1)}95%{left:0}100%{left:-8%;transform:scaleX(-1)}}
+ @keyframes cat-bounce{to{transform:translateY(-3px)}}@keyframes cat-step{to{transform:scaleX(.7)}}
+ @media(max-width:720px){.garden{min-height:280px}}
+ @media(prefers-reduced-motion:reduce){.cat--walk{left:25%}.cat--sit img{display:none}.cat__still{display:block}}
+</style>
+

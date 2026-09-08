@@ -12,10 +12,10 @@ export const site = {
   description:
     'Frontend Engineer y Tech Lead. Arquitectura frontend con Angular y microfrontends, desarrollo asistido por IA y calidad de producto.',
   navigation: [
-    { label: 'Cómo trabajo', href: '#como-trabajo' },
-    { label: 'Stack', href: '#stack' },
-    { label: 'Experiencia', href: '#experiencia' },
-    { label: 'Comunidad', href: '#comunidad' },
+    { label: 'Cómo trabajo', href: '/como-trabajo/' },
+    { label: 'Stack', href: '/stack/' },
+    { label: 'Experiencia', href: '/experiencia/' },
+    { label: 'Comunidad', href: '/comunidad/' },
   ],
   socials: [
     { label: 'GitHub', href: 'https://github.com/' },

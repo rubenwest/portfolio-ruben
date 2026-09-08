@@ -5,6 +5,10 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
+import '../styles/sections.css';
+import '../styles/editorial.css';
+import '../styles/motion.css';
+import '../styles/scroll-scenes.css';
 
 interface Props {
   title?: string;
@@ -36,7 +40,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#0a0a0d" />
+    <meta name="theme-color" content="#101012" />
     <meta name="generator" content={Astro.generator} />
 
     <ClientRouter />
@@ -45,6 +49,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
   <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
     <slot />
+    <script>import '../scripts/motion'; import '../scripts/scroll-scenes';</script>
 
     <style>
       .skip-link {

@@ -2,15 +2,15 @@
 import { site } from '../../content/site';
 ---
 
-<header class="header" transition:name="site-header" transition:persist>
+<header class="header" transition:name="site-header">
   <div class="container header__inner">
-    <a class="header__brand" href="#top">
+    <a class="header__brand" href="/">
       <span class="header__mark" aria-hidden="true"></span>
       {site.name}
     </a>
 
     <nav class="header__nav" aria-label="Navegación principal">
-      {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+      {site.navigation.map((item) => <a href={item.href} aria-current={Astro.url.pathname.replace(/\/$/, '') === item.href.replace(/\/$/, '') ? 'page' : undefined}>{item.label}</a>)}
     </nav>
 
     <a class="header__cta" href={`mailto:${site.email}`}>Hablemos</a>
