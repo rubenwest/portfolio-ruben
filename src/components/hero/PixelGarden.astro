@@ -4,8 +4,10 @@ const tiles = Array.from({length:48},(_,i)=>({tone:(i*7+Math.floor(i/8)*3)%5,del
 <div class="garden" aria-hidden="true">
   <div class="garden__tiles">{tiles.map(({tone,delay})=><span class={`tile tone-${tone}`} style={`--delay:${delay}s`}/>)}</div>
   <span class="garden__label">CRAFTED WITH CODE / ALMERÍA, ES</span>
-  <div class="cat cat--walk"><svg viewBox="0 0 20 20" shape-rendering="crispEdges"><g fill="currentColor"><path d="M3 7h2V3h2v2h4V3h2v8H5V9H3zM5 11h10v5H5zM15 9h2v5h-2zM17 7h2v4h-2z"/><path class="legs" d="M5 15h3v4H5zM12 15h3v4h-3z"/></g><path fill="#ffda83" d="M6 7h2v2H6zM10 7h2v2h-2z"/></svg></div>
-  <div class="cat cat--sit"><img src="/images/cat-sitting-black.gif" alt="" width="64" height="64" loading="lazy" /><svg class="cat__still" viewBox="0 0 20 20" shape-rendering="crispEdges"><path fill="currentColor" d="M4 1h3v3h6V1h3v10h-3v5h3v2H4v-2h3v-5H4zM16 12h2v4h-2z"/></svg></div>
+  {/* Dublín: atigrado pardo con pecho, hocico y patas blancos. */}
+  <div class="cat cat--walk"><svg viewBox="0 0 20 20" shape-rendering="crispEdges"><path class="fur-dark" d="M3 7h2V3h2v2h4V3h2v8H5V9H3zM5 11h10v5H5zM15 9h2v5h-2zM17 7h2v4h-2z"/><path class="fur-mid" d="M9 11h1v5H9zM12 11h1v5h-1zM8 5h1v2H8zM11 5h1v2h-1z"/><path class="fur-white" d="M3 8h3v3H3zM5 11h3v4H5zM17 7h2v2h-2z"/><path class="fur-pink" d="M5 4h1v1H5zM12 4h1v1h-1z"/><path class="fur-eye" d="M6 7h2v2H6zM10 7h2v2h-2z"/><g class="legs"><path class="fur-white" d="M5 15h3v4H5z"/><path class="fur-dark" d="M12 15h3v2h-3z"/><path class="fur-white" d="M12 17h3v2h-3z"/></g></svg></div>
+  {/* Sena: tricolor, manchas naranjas y pardas sobre blanco. */}
+  <div class="cat cat--sit"><svg viewBox="0 0 20 20" shape-rendering="crispEdges"><path class="fur-ginger tail" d="M16 13h3v5h-3z"/><path class="fur-white" d="M4 2h3v3H4zM13 2h3v3h-3zM4 5h12v7H4zM5 12h11v6H5z"/><path class="fur-ginger" d="M13 2h3v3h-3zM12 5h4v4h-4zM10 12h6v4h-6z"/><path class="fur-dark" d="M4 2h3v3H4zM4 5h3v3H4zM5 12h3v3H5z"/><path class="fur-pink" d="M9 10h2v1H9zM5 3h1v1H5zM14 3h1v1h-1z"/><path class="fur-eye" d="M6 8h2v2H6zM11 8h2v2h-2z"/></svg></div>
   <span class="garden__cross garden__cross--one">+</span><span class="garden__cross garden__cross--two">+</span>
 </div>
 <style>
@@ -15,14 +17,18 @@ const tiles = Array.from({length:48},(_,i)=>({tone:(i*7+Math.floor(i/8)*3)%5,del
  .tone-0{--tone:#ff5100}.tone-1{--tone:#ff8200}.tone-2{--tone:#ee2600}.tone-3{--tone:#c40025}.tone-4{--tone:#ffb000}
  .garden__label{position:absolute;left:1.5rem;top:1.5rem;font:10px var(--font-mono);letter-spacing:.07em}
  .garden__cross{position:absolute;font:24px var(--font-mono)}.garden__cross--one{top:33%;left:25%}.garden__cross--two{bottom:15%;right:12%}
- .cat{position:absolute;width:56px;height:56px;filter:drop-shadow(0 3px 0 #00000012)}
+ /* 72px = 3,6px por celda: por debajo de eso el pelaje se vuelve papilla. */
+ .cat{position:absolute;width:72px;height:72px;filter:drop-shadow(0 3px 0 #00000012);--fur-dark:#43332a;--fur-mid:#7d5f46;--fur-white:#f6f1e7;--fur-ginger:#df7327;--fur-pink:#e8a0a0;--fur-eye:#ffda83}
+ .fur-dark{fill:var(--fur-dark)}.fur-mid{fill:var(--fur-mid)}.fur-white{fill:var(--fur-white)}.fur-ginger{fill:var(--fur-ginger)}.fur-pink{fill:var(--fur-pink)}.fur-eye{fill:var(--fur-eye)}
  .cat--walk{bottom:18%;left:0;animation:cat-walk 20s linear infinite}
  .cat--walk svg{animation:cat-bounce .4s steps(2,end) infinite}.legs{animation:cat-step .4s steps(2,end) infinite;transform-origin:center}
- .cat--sit{right:12%;top:24%;width:64px;height:64px}.cat--sit img{image-rendering:pixelated}.cat__still{display:none}
+ .cat--sit{right:12%;top:24%;width:84px;height:84px}
+ .tail{transform-box:fill-box;transform-origin:bottom left;animation:tail-flick 2.6s steps(2,end) infinite}
  @keyframes pixel-shift{0%,100%{filter:none;transform:scale(1)}30%,55%{filter:brightness(1.12);transform:scale(1)}65%{filter:none;transform:scale(.78) rotate(90deg)}75%{filter:none;transform:scale(1)}}
  @keyframes cat-walk{0%{left:-8%;transform:scaleX(1)}45%,49%{left:83%;transform:scaleX(1)}50%,95%{transform:scaleX(-1)}95%{left:0}100%{left:-8%;transform:scaleX(-1)}}
  @keyframes cat-bounce{to{transform:translateY(-3px)}}@keyframes cat-step{to{transform:scaleX(.7)}}
+ @keyframes tail-flick{to{transform:rotate(-16deg)}}
  @media(max-width:720px){.garden{min-height:280px}}
- @media(prefers-reduced-motion:reduce){.cat--walk{left:25%}.cat--sit img{display:none}.cat__still{display:block}}
+ @media(prefers-reduced-motion:reduce){.cat--walk{left:25%}.tail{animation:none}}
 </style>
 
