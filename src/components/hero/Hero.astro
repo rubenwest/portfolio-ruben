@@ -2,32 +2,55 @@
 import PixelGarden from './PixelGarden.astro';
 import PixelIcon from '../pixel-icons/PixelIcon.astro';
 import { site } from '../../content/site';
+import { getLang, routes } from '../../i18n';
 
-const statement = 'Ingeniería sólida.';
-const statementTail = 'Ideas en movimiento.';
+const lang = getLang(Astro.currentLocale);
+const copy = {
+  es: {
+    title: ['Frontend.', 'Con criterio.'],
+    statement: 'Ingeniería sólida.',
+    statementTail: 'Ideas en movimiento.',
+    intro: 'Construyo productos que tienen que aguantar producción.',
+    detail: 'Angular, microfrontends y agentes de IA. De la arquitectura al último detalle.',
+    workLink: 'Así trabajo',
+    from: 'Desde',
+    experienceLink: 'Explora mi experiencia',
+  },
+  en: {
+    title: ['Frontend.', 'With judgement.'],
+    statement: 'Solid engineering.',
+    statementTail: 'Ideas in motion.',
+    intro: 'I build products that have to hold up in production.',
+    detail: 'Angular, microfrontends and AI agents. From architecture down to the last detail.',
+    workLink: 'How I work',
+    from: 'Based in',
+    experienceLink: 'See my experience',
+  },
+}[lang];
+const { statement, statementTail } = copy;
 const badges = ['angular', 'react', 'vue'] as const;
 ---
 <section class="hero-scene" id="top" data-hero-scene>
   <div class="hero">
     <div class="hero__heading" data-hero-fade>
       <p class="eyebrow">{site.name} / {site.role}</p>
-      <h1>Frontend.<br />Con criterio.</h1>
+      <h1>{copy.title[0]}<br />{copy.title[1]}</h1>
     </div>
     <div class="hero__intro" data-hero-fade>
-      <p>Construyo productos que tienen que aguantar producción.</p>
-      <span>Angular, microfrontends e inteligencia artificial. De la arquitectura al último detalle.</span>
-      <a href="/como-trabajo/">Así trabajo <span aria-hidden="true">↘</span></a>
+      <p>{copy.intro}</p>
+      <span>{copy.detail}</span>
+      <a href={routes.work[lang]}>{copy.workLink} <span aria-hidden="true">↘</span></a>
     </div>
     <div class="hero__garden"><PixelGarden /></div>
     <aside class="hero__aside">
       <span class="hero__arrows" aria-hidden="true" data-hero-fade>↓<br />↓<br />↓</span>
       <div>
-        <p class="eyebrow" data-hero-fade>Desde {site.location}</p>
+        <p class="eyebrow" data-hero-fade>{copy.from} {site.location[lang]}</p>
         {/* Copia en flujo: reserva el hueco del aside y es la que leen los
             lectores de pantalla. La que se ve la dibuja .hero__focus encima. */}
         <p class="hero__slot" data-hero-slot>{statement}<br />{statementTail}</p>
       </div>
-      <a href="/experiencia/" data-hero-fade>Explora mi experiencia <span aria-hidden="true">↗</span></a>
+      <a href={routes.experience[lang]} data-hero-fade>{copy.experienceLink} <span aria-hidden="true">↗</span></a>
     </aside>
 
     {/* Se dibuja al tamaño final y encoge hasta el hueco del aside: así el

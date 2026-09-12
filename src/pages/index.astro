@@ -1,18 +1,4 @@
 ---
-import Page from '../layouts/Page.astro';
-import Hero from '../components/hero/Hero.astro';
-import TechMarquee from '../components/marquee/TechMarquee.astro';
-import PortalCard from '../components/cards/PortalCard.astro';
-import { marqueeItems } from '../content/stack';
-import { site } from '../content/site';
-const descriptions = ['De una idea a producción. Arquitectura, IA y atención al detalle.', 'Las herramientas cambian. El criterio para elegirlas, permanece.', 'De sistemas bancarios a liderar equipos de frontend.', 'Compartir lo aprendido. Construir también fuera del código.'];
+import HomeView from '../views/HomeView.astro';
 ---
-<Page>
-  <Hero />
-  <TechMarquee items={marqueeItems} />
-  <section class="section container">
-    <header class="section__head" data-reveal><p class="eyebrow">Explora mi universo</p><h2>Buen software.<br />En cada capa.</h2><p class="lead">Cómo pienso, con qué construyo y lo que he aprendido por el camino.</p></header>
-    <div class="portal-grid">{site.navigation.map((item,index)=><PortalCard title={item.label} href={item.href} description={descriptions[index]!} index={index} />)}</div>
-  </section>
-  <section class="section cta"><div class="container cta__inner"><p class="eyebrow">El siguiente proyecto</p><h2>¿Montamos algo<br />que aguante?</h2><a class="btn-cta" href={`mailto:${site.email}`}>Hablemos ↗</a></div></section>
-</Page>
+<HomeView />

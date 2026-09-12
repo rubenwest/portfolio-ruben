@@ -28,6 +28,11 @@
     align-items: center;
   }
 
+  /* Al invertir, el diagrama conserva la columna ancha. */
+  .capa--reverse {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
   .capa--reverse .capa__text {
     order: 2;
   }
@@ -46,6 +51,26 @@
 
   .capa__text p {
     color: var(--color-text-muted);
+  }
+
+  .capa__text p + p {
+    margin-top: var(--space-sm);
+  }
+
+  .capa__points {
+    list-style: none;
+    margin: var(--space-md) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--color-text);
+  }
+
+  .capa__points li::before {
+    content: '+ ';
+    color: var(--color-accent);
   }
 
   /* ---- stack ---- */

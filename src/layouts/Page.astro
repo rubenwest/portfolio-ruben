@@ -3,17 +3,22 @@ import Base from './Base.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import { site } from '../content/site';
+import { getLang, navigation, routeKeyFor, routes, ui } from '../i18n';
 interface Props { title?: string; }
 const { title } = Astro.props;
-const current = site.navigation.findIndex(item => item.label === title);
-const next = site.navigation[(current + 1) % site.navigation.length];
+const lang = getLang(Astro.currentLocale);
+const t = ui[lang];
+const sections = navigation(lang);
+const key = routeKeyFor(Astro.url.pathname);
+const current = sections.findIndex(item => item.key === key);
+const next = sections[(current + 1) % sections.length]!;
 ---
 <Base title={title ? `${title} — ${site.name}` : undefined}>
   <Header />
   <main id="main" transition:name="page-content">
-    {title && <div class="page-breadcrumb container"><a href="/">Inicio</a><span>/</span><span>{title}</span><span class="page-count">0{current + 1} / 04</span></div>}
+    {title && <div class="page-breadcrumb container"><a href={routes.home[lang]}>{t.home}</a><span>/</span><span>{title}</span><span class="page-count">0{current + 1} / 0{sections.length}</span></div>}
     <slot />
-    {title && <a class="next-page container" href={next.href}><span class="eyebrow">Sigue explorando</span><span>{next.label}</span><span aria-hidden="true">↗</span></a>}
+    {title && <a class="next-page container" href={next.href}><span class="eyebrow">{t.keepExploring}</span><span>{next.label}</span><span aria-hidden="true">↗</span></a>}
   </main>
   <Footer />
 </Base>

@@ -1,4 +1,7 @@
 ---
+import { getLang } from '../../../i18n';
+
+const caption = { es: 'CI · pipeline de calidad', en: 'CI · quality pipeline' }[getLang(Astro.currentLocale)];
 const suites = [
   { name: 'solicitud.component.spec.ts', count: 12 },
   { name: 'expediente.store.spec.ts', count: 9 },
@@ -10,7 +13,7 @@ const total = suites.reduce((sum, suite) => sum + suite.count, 0);
 ---
 
 <div class="report" data-sequence style="--step: 320ms">
-  <p class="report__caption">CI · pipeline de calidad</p>
+  <p class="report__caption">{caption}</p>
 
   <ul class="report__list">
     {

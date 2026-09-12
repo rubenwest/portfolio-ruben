@@ -1,0 +1,70 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Ancho en px; múltiplo de 15 para que los píxeles caigan enteros. */
+  width?: number;
+}
+
+/**
+ * Banderas 8-bit en rejilla de 15x9, con la misma técnica que PixelIcon.
+ * Cada carácter es un color de la paleta; 15 columnas dejan un centro exacto
+ * para la cruz de la Union Jack.
+ */
+const flags: Record<Lang, string[]> = {
+  es: [
+    'RRRRRRRRRRRRRRR',
+    'RRRRRRRRRRRRRRR',
+    'YYYYYYYYYYYYYYY',
+    'YYYYYYYYYYYYYYY',
+    'YYYYYYYYYYYYYYY',
+    'YYYYYYYYYYYYYYY',
+    'YYYYYYYYYYYYYYY',
+    'RRRRRRRRRRRRRRR',
+    'RRRRRRRRRRRRRRR',
+  ],
+  en: [
+    'CWBBBBWCWBBBBWC',
+    'WCWBBBWCWBBBWCW',
+    'BWCWBBWCWBBWCWB',
+    'WWWWWWWCWWWWWWW',
+    'CCCCCCCCCCCCCCC',
+    'WWWWWWWCWWWWWWW',
+    'BWCWBBWCWBBWCWB',
+    'WCWBBBWCWBBBWCW',
+    'CWBBBBWCWBBBBWC',
+  ],
+};
+
+const palette: Record<string, string> = {
+  R: '#c60b1e',
+  Y: '#ffc400',
+  B: '#012169',
+  W: '#ffffff',
+  C: '#c8102e',
+};
+
+const { lang, width = 30 } = Astro.props;
+const rows = flags[lang];
+const cells = rows.flatMap((row, y) => [...row].map((char, x) => ({ x, y, fill: palette[char] })));
+---
+
+<svg
+  class="pixel-flag"
+  width={width}
+  height={(width / 15) * 9}
+  viewBox="0 0 15 9"
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  {cells.map((cell) => <rect x={cell.x} y={cell.y} width="1" height="1" fill={cell.fill} />)}
+</svg>
+
+<style>
+  .pixel-flag {
+    display: block;
+    flex: none;
+    image-rendering: pixelated;
+  }
+</style>

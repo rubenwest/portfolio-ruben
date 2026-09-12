@@ -1,22 +1,36 @@
 ---
+import { getLang } from '../../../i18n';
+
 interface Line {
   kind: 'prompt' | 'step' | 'done';
   text: string;
 }
 
-const lines: Line[] = [
-  { kind: 'prompt', text: 'claude "migra este formulario a signals"' },
-  { kind: 'step', text: 'Leyendo solicitud.component.ts' },
-  { kind: 'step', text: '3 @Input() y 2 @Output() detectados' },
-  { kind: 'done', text: 'Refactor aplicado · 118 líneas' },
-  { kind: 'done', text: 'Tests: 14 passed, 0 failed' },
-];
+const script: Record<'es' | 'en', Line[]> = {
+  es: [
+    { kind: 'prompt', text: 'pipeline run "migrar solicitud a signals"' },
+    { kind: 'step', text: 'análisis · 3 @Input, 2 @Output, 4 consumidores' },
+    { kind: 'step', text: 'orquestador → refactor, tests, review' },
+    { kind: 'done', text: 'refactor · 118 líneas en 3 ficheros' },
+    { kind: 'done', text: 'tests · 14 passed, 0 failed' },
+    { kind: 'done', text: 'review · PR lista para revisión humana' },
+  ],
+  en: [
+    { kind: 'prompt', text: 'pipeline run "migrate form to signals"' },
+    { kind: 'step', text: 'analysis · 3 @Input, 2 @Output, 4 consumers' },
+    { kind: 'step', text: 'orchestrator → refactor, tests, review' },
+    { kind: 'done', text: 'refactor · 118 lines across 3 files' },
+    { kind: 'done', text: 'tests · 14 passed, 0 failed' },
+    { kind: 'done', text: 'review · PR ready for human review' },
+  ],
+};
+const lines = script[getLang(Astro.currentLocale)];
 ---
 
 <div class="terminal" data-sequence style="--step: 400ms">
   <header class="terminal__bar">
     <span></span><span></span><span></span>
-    <p>claude-code</p>
+    <p>agent-pipeline</p>
   </header>
 
   <ol class="terminal__body">

@@ -1,0 +1,140 @@
+---
+import Page from '../layouts/Page.astro';
+import ScrollTypewriter from '../components/hero/ScrollTypewriter.astro';
+import NodeDiagram from '../components/diagrams/NodeDiagram.astro';
+import TerminalMock from '../components/diagrams/mocks/TerminalMock.astro';
+import ComponentTreeMock from '../components/diagrams/mocks/ComponentTreeMock.astro';
+import TestReportMock from '../components/diagrams/mocks/TestReportMock.astro';
+import type { DiagramNode } from '../components/diagrams/types';
+import { getLang, ui } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+
+// Los chips van en las esquinas, fuera del alto de la card central, para que
+// ninguna card (sea cual sea su contenido) los tape.
+const corners = [
+  { x: 18, y: 11, to: { x: 34, y: 40 } },
+  { x: 82, y: 11, to: { x: 66, y: 40 } },
+  { x: 18, y: 89, to: { x: 34, y: 60 } },
+  { x: 82, y: 89, to: { x: 66, y: 60 } },
+] as const;
+
+const place = (items: Pick<DiagramNode, 'icon' | 'label'>[]): DiagramNode[] =>
+  items.map((item, index) => ({ ...item, ...corners[index], first: 'v' }));
+
+const copy = {
+  es: {
+    title: 'Así trabajo hoy como Tech Lead frontend.',
+    lead: 'Programo con un sistema de agentes de IA que he montado yo, diseño frontends en los que varios equipos avanzan a la vez y me tomo los tests muy en serio. Te lo cuento por partes.',
+    ai: {
+      title: 'Un sistema de agentes propio',
+      body: [
+        'Uso la IA en modo agente, bastante más allá del autocompletado. Tengo un pipeline en el que un orquestador recibe la tarea y la reparte entre subagentes especializados, cada uno con un trabajo concreto. Antes de tocar código, un agente de análisis que he construido yo revisa el proyecto y prepara el contexto.',
+        'La arquitectura la decido yo y ningún cambio llega a la rama principal sin que lo haya revisado.',
+      ],
+      points: ['Pipeline con orquestador y subagentes', 'Agente de análisis desarrollado por mí', 'Claude Code y MCP como base'],
+      nodes: ['orquestador', 'subagentes', 'agente de análisis', 'revisión humana'],
+    },
+    arch: {
+      title: 'Arquitectura frontend',
+      body: 'Trabajo con microfrontends en Angular. Un shell carga cada remote en runtime, cada equipo despliega el suyo cuando le toca y todos usan el mismo design system. Así varios equipos tocan la misma aplicación sin bloquearse entre ellos.',
+    },
+    qa: {
+      title: 'Calidad de ingeniería',
+      body: 'Tests unitarios, e2e y de accesibilidad, y una CI que no deja mergear si algo falla. Vengo de la banca, donde un bug en producción sale caro, y eso se sigue notando en cómo reviso código.',
+    },
+    quote: 'Los agentes hacen el *trabajo pesado*. Las decisiones las tomo *yo*.',
+    footnote: 'Un orquestador, subagentes con una tarea cada uno y un agente de análisis hecho a medida. Así programo cada día.',
+  },
+  en: {
+    title: 'How I work today as a frontend Tech Lead.',
+    lead: "I code with an AI agent system I built myself, I design frontends where several teams can move at the same time, and I take testing seriously. Here's how each part works.",
+    ai: {
+      title: 'My own agent system',
+      body: [
+        'I use AI in agent mode, well beyond autocomplete. I run a pipeline where an orchestrator takes the task and splits it across specialised subagents, each with one clear job. Before any code changes, an analysis agent I built myself goes through the project and prepares the context.',
+        'I make the architecture calls, and no change reaches the main branch until I have reviewed it.',
+      ],
+      points: ['Orchestrator and subagent pipeline', 'Analysis agent I built myself', 'Built on Claude Code and MCP'],
+      nodes: ['orchestrator', 'subagents', 'analysis agent', 'human review'],
+    },
+    arch: {
+      title: 'Frontend architecture',
+      body: 'I work with Angular microfrontends. A shell loads each remote at runtime, every team deploys its own on its own schedule, and they all share one design system. That way several teams can work on the same app without blocking each other.',
+    },
+    qa: {
+      title: 'Engineering quality',
+      body: "Unit, e2e and accessibility tests, plus a CI that won't let anything merge if it fails. I come from banking, where a production bug costs real money, and that still shows in how I review code.",
+    },
+    quote: 'Agents do the *heavy lifting*. The decisions are *mine*.',
+    footnote: 'An orchestrator, subagents with one job each and an analysis agent built for the way I work. That is how I code every day.',
+  },
+}[lang];
+
+const aiIcons = ['robot', 'tree', 'terminal', 'check'] as const;
+const aiNodes = place(copy.ai.nodes.map((label, index) => ({ icon: aiIcons[index]!, label })));
+
+const archNodes = place([
+  { icon: 'tree', label: 'shell' },
+  { icon: 'briefcase', label: 'remotes' },
+  { icon: 'globe', label: 'design system' },
+  { icon: 'bolt', label: 'lazy load' },
+]);
+
+const qaNodes = place([
+  { icon: 'check', label: 'unit' },
+  { icon: 'bolt', label: 'e2e' },
+  { icon: 'globe', label: 'a11y' },
+  { icon: 'terminal', label: 'CI/CD' },
+]);
+---
+<Page title={ui[lang].nav.work}>
+<section class="section" id="como-trabajo">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">{ui[lang].nav.work}</p>
+          <h1>{copy.title}</h1>
+          <p class="lead">{copy.lead}</p>
+        </header>
+
+        <div class="capas">
+          <article class="capa" data-reveal>
+            <div class="capa__text">
+              <span class="capa__num">01</span>
+              <h3>{copy.ai.title}</h3>
+              {copy.ai.body.map((paragraph) => <p>{paragraph}</p>)}
+              <ul class="capa__points">
+                {copy.ai.points.map((point) => <li>{point}</li>)}
+              </ul>
+            </div>
+            <NodeDiagram nodes={aiNodes}>
+              <TerminalMock />
+            </NodeDiagram>
+          </article>
+
+          <article class="capa capa--reverse" data-reveal>
+            <div class="capa__text">
+              <span class="capa__num">02</span>
+              <h3>{copy.arch.title}</h3>
+              <p>{copy.arch.body}</p>
+            </div>
+            <NodeDiagram nodes={archNodes}>
+              <ComponentTreeMock />
+            </NodeDiagram>
+          </article>
+
+          <article class="capa" data-reveal>
+            <div class="capa__text">
+              <span class="capa__num">03</span>
+              <h3>{copy.qa.title}</h3>
+              <p>{copy.qa.body}</p>
+            </div>
+            <NodeDiagram nodes={qaNodes}>
+              <TestReportMock />
+            </NodeDiagram>
+          </article>
+        </div>
+      </div>
+    </section>
+<ScrollTypewriter text={copy.quote} footnote={copy.footnote} scrollHeight="150vh" />
+</Page>

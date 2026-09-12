@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import { site } from '../content/site';
+import { getLang, languages, localizedPath, ui, type Lang } from '../i18n';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
@@ -15,21 +16,29 @@ interface Props {
   description?: string;
 }
 
+const lang = getLang(Astro.currentLocale);
+
 const {
   title = `${site.name} — ${site.role}`,
-  description = site.description,
+  description = site.description[lang],
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const base = Astro.site ?? Astro.url;
+const canonical = new URL(Astro.url.pathname, base).href;
+const alternates = (Object.keys(languages) as Lang[]).map((code) => ({
+  code,
+  href: new URL(localizedPath(Astro.url.pathname, code), base).href,
+}));
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.code} href={alt.href} />)}
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -38,6 +47,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_GB' : 'es_ES'} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#101012" />
@@ -47,7 +57,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
   </head>
 
   <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <a class="skip-link" href="#main">{ui[lang].skipLink}</a>
     <slot />
     <script>import '../scripts/motion'; import '../scripts/scroll-scenes';</script>
 

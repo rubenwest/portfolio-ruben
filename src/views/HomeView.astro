@@ -1,0 +1,38 @@
+---
+import Page from '../layouts/Page.astro';
+import Hero from '../components/hero/Hero.astro';
+import TechMarquee from '../components/marquee/TechMarquee.astro';
+import PortalCard from '../components/cards/PortalCard.astro';
+import { marqueeItems } from '../content/stack';
+import { site } from '../content/site';
+import { getLang, navigation, ui } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const copy = {
+  es: {
+    descriptions: ['De una idea a producción. Arquitectura, agentes de IA y cuidado por el detalle.', 'Las herramientas que uso y por qué las elegí.', 'De sistemas bancarios a liderar equipos de frontend.', 'Lo que aprendo lo comparto, también fuera del trabajo.'],
+    eyebrow: 'Explora mi universo',
+    title: ['Buen software.', 'En cada capa.'],
+    lead: 'Cómo pienso, con qué construyo y lo que he aprendido por el camino.',
+    ctaEyebrow: 'El siguiente proyecto',
+    ctaTitle: ['¿Montamos algo', 'que aguante?'],
+  },
+  en: {
+    descriptions: ['From idea to production. Architecture, AI agents and care for the details.', 'The tools I use and why I picked them.', 'From banking systems to leading frontend teams.', 'What I learn, I share, outside of work too.'],
+    eyebrow: 'Explore my work',
+    title: ['Good software.', 'At every layer.'],
+    lead: "How I think, what I build with and what I've learned along the way.",
+    ctaEyebrow: 'Your next project',
+    ctaTitle: ['Shall we build', 'something that lasts?'],
+  },
+}[lang];
+---
+<Page>
+  <Hero />
+  <TechMarquee items={marqueeItems} />
+  <section class="section container">
+    <header class="section__head" data-reveal><p class="eyebrow">{copy.eyebrow}</p><h2>{copy.title[0]}<br />{copy.title[1]}</h2><p class="lead">{copy.lead}</p></header>
+    <div class="portal-grid">{navigation(lang).map((item,index)=><PortalCard title={item.label} href={item.href} description={copy.descriptions[index]!} index={index} />)}</div>
+  </section>
+  <section class="section cta"><div class="container cta__inner"><p class="eyebrow">{copy.ctaEyebrow}</p><h2>{copy.ctaTitle[0]}<br />{copy.ctaTitle[1]}</h2><a class="btn-cta" href={`mailto:${site.email}`}>{ui[lang].cta} ↗</a></div></section>
+</Page>

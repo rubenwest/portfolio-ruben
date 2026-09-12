@@ -1,5 +1,6 @@
 ---
 import { formatRange, type ExperienceEntry } from '../../content/experience';
+import { getLang, ui } from '../../i18n';
 
 interface Props {
   entry: ExperienceEntry;
@@ -7,6 +8,8 @@ interface Props {
 
 const { entry } = Astro.props;
 const isCurrent = entry.end === 'current';
+const lang = getLang(Astro.currentLocale);
+const t = ui[lang];
 ---
 
 <article class:list={['xp', { 'is-compact': !entry.highlight }]}>
@@ -17,17 +20,17 @@ const isCurrent = entry.end === 'current';
           <h3>{entry.role}</h3>
           <p class="xp__company">
             {entry.company}
-            {isCurrent && <span class="xp__badge">Actual</span>}
+            {isCurrent && <span class="xp__badge">{t.current}</span>}
           </p>
         </div>
         <div class="xp__meta">
-          <time>{formatRange(entry.start, entry.end)}</time>
+          <time>{formatRange(entry.start, entry.end, lang)}</time>
           <span class="xp__location">{entry.location}</span>
         </div>
       </div>
       <p class="xp__lead">{entry.summary}</p>
       <span class="xp__toggle" aria-hidden="true">
-        <span class="xp__toggle-label" data-open="Ocultar detalle" data-closed="Ver más"></span>
+        <span class="xp__toggle-label" data-open={t.showLess} data-closed={t.showMore}></span>
         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor">
           <path d="M4 6l4 4 4-4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
         </svg>

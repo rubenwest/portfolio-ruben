@@ -1,7 +1,11 @@
 ---
 interface Props { title: string; href: string; description: string; index: number; }
+import { getLang, ui } from '../../i18n';
 const { title, href, description, index } = Astro.props;
-const labels = [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['2011', '2021', 'HOY'], ['APRENDER', 'COMPARTIR', 'CONECTAR']];
+const lang = getLang(Astro.currentLocale);
+const labels = lang === 'en'
+  ? [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['2011', '2021', 'TODAY'], ['LEARN', 'SHARE', 'CONNECT']]
+  : [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['2011', '2021', 'HOY'], ['APRENDER', 'COMPARTIR', 'CONECTAR']];
 ---
 <a class={`portal-card portal-card--${index}`} href={href} data-motion-card>
   <div class="portal-card__top"><span>0{index + 1} / {['PROCESS', 'TOOLKIT', 'JOURNEY', 'PEOPLE'][index]}</span><span class="portal-card__arrow" aria-hidden="true">↗</span></div>
@@ -10,5 +14,5 @@ const labels = [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], [
     {labels[index]!.map((label,i)=><div class={`art-panel art-panel--${i}`}><span class="art-panel__dot"></span><span>{label}</span><div class="art-panel__lines"><i/><i/><i/></div><span class="art-panel__symbol">{['⌘','⌁','↗','✳'][index]}</span></div>)}
     <span class="art-orbit"></span>
   </div>
-  <div class="portal-card__copy"><h3>{title}</h3><p>{description}</p><span class="portal-card__link">Explorar <span aria-hidden="true">→</span></span></div>
+  <div class="portal-card__copy"><h3>{title}</h3><p>{description}</p><span class="portal-card__link">{ui[lang].explore} <span aria-hidden="true">→</span></span></div>
 </a>

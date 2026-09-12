@@ -1,19 +1,43 @@
 ---
+import PixelFlag from '../pixel-icons/PixelFlag.astro';
 import { site } from '../../content/site';
+import { getLang, languages, localizedPath, navigation, routes, ui, type Lang } from '../../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = ui[lang];
+const pathname = Astro.url.pathname.replace(/\/?$/, '/');
+const langs = Object.keys(languages) as Lang[];
 ---
 
 <header class="header" transition:name="site-header">
   <div class="container header__inner">
-    <a class="header__brand" href="/">
+    <a class="header__brand" href={routes.home[lang]}>
       <span class="header__mark" aria-hidden="true"></span>
       {site.name}
     </a>
 
-    <nav class="header__nav" aria-label="Navegación principal">
-      {site.navigation.map((item) => <a href={item.href} aria-current={Astro.url.pathname.replace(/\/$/, '') === item.href.replace(/\/$/, '') ? 'page' : undefined}>{item.label}</a>)}
+    <nav class="header__nav" aria-label={t.mainNav}>
+      {navigation(lang).map((item) => <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>{item.label}</a>)}
     </nav>
 
-    <a class="header__cta" href={`mailto:${site.email}`}>Hablemos</a>
+    <nav class="header__lang" aria-label={t.langNav}>
+      {
+        langs.map((code) => (
+          <a
+            href={localizedPath(pathname, code)}
+            hreflang={code}
+            lang={code}
+            aria-current={code === lang ? 'true' : undefined}
+            title={languages[code]}
+          >
+            <PixelFlag lang={code} />
+            <span class="visually-hidden">{languages[code]}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <a class="header__cta" href={`mailto:${site.email}`}>{t.cta}</a>
   </div>
 </header>
 
@@ -68,6 +92,44 @@ import { site } from '../../content/site';
     color: var(--color-text);
   }
 
+  .header__lang {
+    display: flex;
+    align-self: stretch;
+    border-left: 1px solid var(--color-border);
+  }
+
+  .header__lang a {
+    display: grid;
+    place-items: center;
+    padding: 0 0.7rem;
+    opacity: 0.55;
+    filter: saturate(0.5);
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      filter var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .header__lang a:hover {
+    opacity: 1;
+    filter: none;
+  }
+
+  .header__lang a:hover :global(.pixel-flag) {
+    transform: translateY(-2px);
+  }
+
+  .header__lang :global(.pixel-flag) {
+    transition: transform var(--dur-fast) var(--ease-out);
+    box-shadow: 2px 2px 0 #00000066;
+  }
+
+  .header__lang a[aria-current] {
+    opacity: 1;
+    filter: none;
+    box-shadow: inset 0 -2px var(--color-accent);
+  }
+
   .header__cta {
     padding: 8px 16px;
     border: 1px solid var(--color-border-strong);
@@ -84,8 +146,34 @@ import { site } from '../../content/site';
   }
 
   @media (max-width: 720px) {
+    .header__inner {
+      height: auto;
+      min-height: 64px;
+      gap: 0;
+    }
+
     .header__nav {
       display: none;
+    }
+
+    .header__lang {
+      height: 64px;
+      margin-left: 0.5rem;
+    }
+
+    .header__lang a {
+      padding: 0 0.4rem;
+    }
+
+    .header__lang :global(.pixel-flag) {
+      width: 24px;
+      height: auto;
+    }
+
+    .header .header__cta {
+      margin-left: 0;
+      padding: 0 0.8rem;
+      white-space: nowrap;
     }
   }
 </style>

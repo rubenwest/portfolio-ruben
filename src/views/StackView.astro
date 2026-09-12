@@ -1,0 +1,37 @@
+---
+import Page from '../layouts/Page.astro';
+import FlipStackCard from '../components/cards/FlipStackCard.astro';
+import { stack } from '../content/stack';
+import { getLang, ui } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const copy = {
+  es: {
+    eyebrow: 'Stack / herramientas con propósito',
+    title: ['Con qué', 'construyo.'],
+    lead: 'Cada herramienta tiene su sitio. Gira las tarjetas para ver qué uso en cada capa.',
+    caption: '04 capas · Un mismo criterio de ingeniería',
+  },
+  en: {
+    eyebrow: 'Stack / tools with a purpose',
+    title: ['What I', 'build with.'],
+    lead: 'Every tool has its place. Flip the cards to see what I use at each layer.',
+    caption: '04 layers · One engineering standard',
+  },
+}[lang];
+---
+<Page title={ui[lang].nav.stack}>
+  <section class="section stack-showcase" id="stack">
+    <div class="container">
+      <header class="section__head" data-reveal><p class="eyebrow">{copy.eyebrow}</p><h1>{copy.title[0]}<br />{copy.title[1]}</h1><p class="lead">{copy.lead}</p></header>
+      <div class="stack-assembly" data-scroll-scene>
+        <div class="assembly-block assembly-block--one" aria-hidden="true"></div>
+        <div class="assembly-block assembly-block--two" aria-hidden="true"></div>
+        <div class="assembly-block assembly-block--three" aria-hidden="true"></div>
+        <div class="assembly-diamond" aria-hidden="true"></div>
+        {stack[lang].map((category,index)=><FlipStackCard category={category} index={index}/>)}
+      </div>
+      <p class="stack-caption">{copy.caption}</p>
+    </div>
+  </section>
+</Page>

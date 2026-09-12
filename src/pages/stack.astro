@@ -1,20 +1,4 @@
 ---
-import Page from '../layouts/Page.astro';
-import FlipStackCard from '../components/cards/FlipStackCard.astro';
-import { stack } from '../content/stack';
+import StackView from '../views/StackView.astro';
 ---
-<Page title="Stack">
-  <section class="section stack-showcase" id="stack">
-    <div class="container">
-      <header class="section__head" data-reveal><p class="eyebrow">Stack / herramientas con propósito</p><h1>Con qué<br />construyo.</h1><p class="lead">Cada pieza tiene su lugar. Explora las herramientas detrás de cada capa.</p></header>
-      <div class="stack-assembly" data-scroll-scene>
-        <div class="assembly-block assembly-block--one" aria-hidden="true"></div>
-        <div class="assembly-block assembly-block--two" aria-hidden="true"></div>
-        <div class="assembly-block assembly-block--three" aria-hidden="true"></div>
-        <div class="assembly-diamond" aria-hidden="true"></div>
-        {stack.map((category,index)=><FlipStackCard category={category} index={index}/>)}
-      </div>
-      <p class="stack-caption">04 capas · Un mismo criterio de ingeniería</p>
-    </div>
-  </section>
-</Page>
+<StackView />

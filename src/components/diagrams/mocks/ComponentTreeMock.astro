@@ -1,11 +1,14 @@
 ---
+import { getLang } from '../../../i18n';
+
+const caption = { es: 'Composición en runtime', en: 'Runtime composition' }[getLang(Astro.currentLocale)];
 const shell = 'shell-app';
 const remotes = ['mf-tramites', 'mf-expedientes', 'mf-firma'];
 const shared = 'ui-kit · design tokens';
 ---
 
 <div class="tree" data-sequence style="--step: 260ms">
-  <p class="tree__caption">Composición en runtime</p>
+  <p class="tree__caption">{caption}</p>
 
   <div class="tree__shell" data-step style="--i: 0">
     <span class="tree__dot" aria-hidden="true"></span>

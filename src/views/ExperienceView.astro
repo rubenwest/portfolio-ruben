@@ -1,0 +1,39 @@
+---
+import Page from '../layouts/Page.astro';
+import ExperienceCard from '../components/cards/ExperienceCard.astro';
+import { experience } from '../content/experience';
+import { getLang, ui } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const copy = {
+  es: {
+    title: 'De la banca crítica al liderazgo frontend.',
+    lead: 'Catorce años haciendo software. En los últimos, además, decido cómo se hace.',
+  },
+  en: {
+    title: 'From critical banking systems to frontend leadership.',
+    lead: 'Fourteen years building software. Lately, I also decide how it gets built.',
+  },
+}[lang];
+---
+<Page title={ui[lang].nav.experience}>
+<section class="section" id="experiencia">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">{ui[lang].nav.experience}</p>
+          <h1>{copy.title}</h1>
+          <p class="lead">{copy.lead}</p>
+        </header>
+
+        <div class="timeline">
+          {
+            experience[lang].map((entry) => (
+              <div data-reveal>
+                <ExperienceCard entry={entry} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+</Page>

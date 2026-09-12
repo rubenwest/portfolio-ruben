@@ -1,5 +1,8 @@
 ---
 import { site } from '../../content/site';
+import { getLang, ui } from '../../i18n';
+
+const lang = getLang(Astro.currentLocale);
 
 const year = new Date().getFullYear();
 ---
@@ -8,10 +11,10 @@ const year = new Date().getFullYear();
   <div class="container footer__inner">
     <div class="footer__brand">
       <p class="footer__name">{site.name}</p>
-      <p class="footer__role">{site.role} · {site.location}</p>
+      <p class="footer__role">{site.role} · {site.location[lang]}</p>
     </div>
 
-    <nav class="footer__links" aria-label="Enlaces">
+    <nav class="footer__links" aria-label={ui[lang].footerLinks}>
       {
         site.socials.map((social) => (
           <a href={social.href} target="_blank" rel="noopener noreferrer">
@@ -26,7 +29,7 @@ const year = new Date().getFullYear();
 
   <div class="container footer__legal">
     <span>© {year} {site.name}</span>
-    <span>Diseñado con intención. Construido en Almería.</span>
+    <span>{ui[lang].footerLegal}</span>
   </div>
 </footer>
 
