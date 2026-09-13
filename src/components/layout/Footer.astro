@@ -1,5 +1,5 @@
 ---
-import { site } from '../../content/site';
+import { contactLinks, site } from '../../content/site';
 import { getLang, ui } from '../../i18n';
 
 const lang = getLang(Astro.currentLocale);
@@ -23,7 +23,13 @@ const year = new Date().getFullYear();
           </a>
         ))
       }
-      <a href={`mailto:${site.email}`}>Email</a>
+      {
+        contactLinks(lang).map((channel) => (
+          <a href={channel.href} target={channel.key === 'email' ? undefined : '_blank'} rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}>
+            {channel.label}
+          </a>
+        ))
+      }
     </nav>
   </div>
 
