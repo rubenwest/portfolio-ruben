@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import { site } from '../content/site';
-import { getLang, languages, localizedPath, ui, type Lang } from '../i18n';
+import { getLang, languages, localizedPath, ui, withBase, type Lang } from '../i18n';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
@@ -36,7 +36,7 @@ const alternates = (Object.keys(languages) as Lang[]).map((code) => ({
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.code} href={alt.href} />)}
 

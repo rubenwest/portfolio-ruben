@@ -4,14 +4,19 @@ export type Lang = keyof typeof languages;
 
 export const defaultLang: Lang = 'es';
 
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** Ruta absoluta dentro del sitio, con el `base` de Astro delante (GitHub Pages). */
+export const withBase = (path: string) => `${BASE}${path}`;
+
 /** Rutas equivalentes en cada idioma. El selector de idioma salta entre ellas. */
 export const routes = {
-  home: { es: '/', en: '/en/' },
-  work: { es: '/como-trabajo/', en: '/en/how-i-work/' },
-  stack: { es: '/stack/', en: '/en/stack/' },
-  experience: { es: '/experiencia/', en: '/en/experience/' },
-  community: { es: '/comunidad/', en: '/en/community/' },
-} as const;
+  home: { es: withBase('/'), en: withBase('/en/') },
+  work: { es: withBase('/como-trabajo/'), en: withBase('/en/how-i-work/') },
+  stack: { es: withBase('/stack/'), en: withBase('/en/stack/') },
+  experience: { es: withBase('/experiencia/'), en: withBase('/en/experience/') },
+  community: { es: withBase('/comunidad/'), en: withBase('/en/community/') },
+};
 
 export type RouteKey = keyof typeof routes;
 
