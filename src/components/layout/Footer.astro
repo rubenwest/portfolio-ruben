@@ -25,7 +25,7 @@ const year = new Date().getFullYear();
       }
       {
         contactLinks(lang).map((channel) => (
-          <a href={channel.href} target={channel.key === 'email' ? undefined : '_blank'} rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}>
+          <a href={channel.href} data-contact={channel.key} target={channel.key === 'email' ? undefined : '_blank'} rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}>
             {channel.label}
           </a>
         ))

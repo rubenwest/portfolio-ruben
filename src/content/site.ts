@@ -13,6 +13,8 @@ export const site = {
   /** Teléfono en formato internacional sin '+', como lo pide wa.me. */
   phone: '34600797224',
   telegram: 'Rubenwest',
+  /** Código de GoatCounter: el panel está en https://rubenwest.goatcounter.com/ */
+  goatcounter: 'rubenwest',
   description: {
     es: 'Frontend Engineer y Tech Lead. Arquitectura frontend con Angular y microfrontends, desarrollo con agentes de IA y calidad de producto.',
     en: 'Frontend Engineer and Tech Lead. Frontend architecture with Angular and microfrontends, AI agent-driven development and product quality.',

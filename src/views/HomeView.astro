@@ -51,6 +51,7 @@ const copy = {
               <a
                 class:list={['btn-cta', { 'btn-cta--ghost': index > 0 }]}
                 href={channel.href}
+                data-contact={channel.key}
                 target={channel.key === 'email' ? undefined : '_blank'}
                 rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}
               >

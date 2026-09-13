@@ -56,12 +56,26 @@ const alternates = (Object.keys(languages) as Lang[]).map((code) => ({
     <meta name="generator" content={Astro.generator} />
 
     <ClientRouter />
+
+    {/* Analítica sin cookies. Solo en la web publicada, para no contar las pruebas en local. */}
+    {
+      import.meta.env.PROD && (
+        <script
+          is:inline
+          transition:persist
+          data-goatcounter={`https://${site.goatcounter}.goatcounter.com/count`}
+          data-goatcounter-settings='{"no_onload": true}'
+          async
+          src="//gc.zgo.at/count.js"
+        />
+      )
+    }
   </head>
 
   <body>
     <a class="skip-link" href="#main">{ui[lang].skipLink}</a>
     <slot />
-    <script>import '../scripts/motion'; import '../scripts/scroll-scenes';</script>
+    <script>import '../scripts/motion'; import '../scripts/scroll-scenes'; import '../scripts/analytics';</script>
 
     <style>
       .skip-link {
