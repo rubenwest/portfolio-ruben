@@ -204,6 +204,26 @@
     font-size: var(--fs-h2);
   }
 
+  .cta--portrait {
+    padding-bottom: 0;
+  }
+
+  .cta__inner--portrait {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: end;
+    justify-items: stretch;
+    text-align: left;
+    gap: var(--space-xl);
+  }
+
+  .cta__copy {
+    display: grid;
+    gap: var(--space-md);
+    justify-items: start;
+    align-self: center;
+    padding-bottom: var(--space-2xl);
+  }
+
   .btn-cta {
     margin-top: var(--space-sm);
     padding: 14px 28px;
@@ -231,5 +251,15 @@
 
     .community {
       flex-direction: column;
+    }
+
+    .cta__inner--portrait {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .cta__copy {
+      justify-items: center;
+      padding-bottom: 0;
     }
   }

@@ -1,0 +1,399 @@
+---
+import PixelArt from '../pixel-icons/PixelArt.astro';
+import { getLang } from '../../i18n';
+
+/** Paleta común de los iconos 16x16 del hub. */
+const palette = {
+  K: '#151515',
+  D: '#3a3a3e',
+  G: '#8d8d93',
+  L: '#d6d6da',
+  W: '#ffffff',
+  O: '#ff5100',
+  R: '#e8452c',
+  Y: '#ffc043',
+  B: '#159bd7',
+  S: '#8fd6f7',
+} as const;
+
+const icons = {
+  /** Caja fuerte: la etapa de banca. */
+  vault: [
+    '................',
+    '.KKKKKKKKKKKKKK.',
+    '.KGGGGGGGGGGGGK.',
+    '.KGLLLLLLLLLLGK.',
+    '.KGLKKKKKKKKLGK.',
+    '.KGLKDDDDDDKLGK.',
+    '.KGLKDOYYODKLGK.',
+    '.KGLKDYOOYDKLOK.',
+    '.KGLKDYOOYDKLOK.',
+    '.KGLKDOYYODKLGK.',
+    '.KGLKDDDDDDKLGK.',
+    '.KGLKKKKKKKKLGK.',
+    '.KGLLLLLLLLLLGK.',
+    '.KGGGGGGGGGGGGK.',
+    '.KKKKKKKKKKKKKK.',
+    '..KK........KK..',
+  ],
+  /** Cohete: producto que crece. */
+  rocket: [
+    '.......RR.......',
+    '......RWWR......',
+    '.....WWWWWW.....',
+    '.....WLLLLW.....',
+    '.....WBSSBW.....',
+    '.....WSBBSW.....',
+    '.....WBSSBW.....',
+    '.....WLLLLW.....',
+    '.....WWWWWW.....',
+    '....RWWWWWWR....',
+    '...RRWLLLLWRR...',
+    '...RR.WWWW.RR...',
+    '......OYYO......',
+    '......YOOY......',
+    '.......OO.......',
+    '.......Y........',
+  ],
+  /** Grafo de nodos: orquestar equipos, remotes y agentes. */
+  graph: [
+    '................',
+    '.BBB........YYY.',
+    '.BWB........YWY.',
+    '.BBB........YYY.',
+    '...K........K...',
+    '....K......K....',
+    '.....K....K.....',
+    '......OOOO......',
+    '......OYYO......',
+    '......OYYO......',
+    '......OOOO......',
+    '.......KK.......',
+    '.......KK.......',
+    '......GGGG......',
+    '......GWWG......',
+    '......GGGG......',
+  ],
+} as const;
+
+const lang = getLang(Astro.currentLocale);
+
+interface HubCopy {
+  caption: string;
+  cards: { icon: keyof typeof icons; target: string; title: string; text: string; points: string[] }[];
+}
+
+const copies: Record<'es' | 'en', HubCopy> = {
+  es: {
+    caption: 'Tres etapas, un mismo criterio',
+    cards: [
+      {
+        icon: 'vault',
+        target: 'xp-viewnext',
+        title: 'Banca crítica',
+        text: 'Diez años en sistemas donde un fallo cuesta dinero de verdad.',
+        points: ['PL/SQL y COBOL', 'Entornos regulados', 'Trazabilidad'],
+      },
+      {
+        icon: 'rocket',
+        target: 'xp-twenix',
+        title: 'Producto EdTech',
+        text: 'Interfaces rápidas para un producto que no paraba de crecer.',
+        points: ['Angular y RxJS', 'Testing con Jest y Cypress', 'Producto y diseño'],
+      },
+      {
+        icon: 'graph',
+        target: 'xp-ayesa',
+        title: 'Tech Lead',
+        text: 'Ahora también decido cómo se construye, no solo lo construyo.',
+        points: ['Microfrontends', 'Agentes de IA', 'Mentoría'],
+      },
+    ],
+  },
+  en: {
+    caption: 'Three stages, one standard',
+    cards: [
+      {
+        icon: 'vault',
+        target: 'xp-viewnext',
+        title: 'Critical banking',
+        text: 'Ten years on systems where a bug costs real money.',
+        points: ['PL/SQL and COBOL', 'Regulated environments', 'Traceability'],
+      },
+      {
+        icon: 'rocket',
+        target: 'xp-twenix',
+        title: 'EdTech product',
+        text: 'Fast interfaces for a product that kept on growing.',
+        points: ['Angular and RxJS', 'Testing with Jest and Cypress', 'Product and design'],
+      },
+      {
+        icon: 'graph',
+        target: 'xp-ayesa',
+        title: 'Tech Lead',
+        text: 'These days I also decide how things get built, not just build them.',
+        points: ['Microfrontends', 'AI agents', 'Mentoring'],
+      },
+    ],
+  },
+};
+
+const copy = copies[lang];
+
+/** Baldosas del mosaico de fondo: [columna, fila, tono]. Fijas, sin aleatoriedad. */
+const tiles: [number, number, number][] = [
+  [0, 1, 2], [1, 3, 1], [2, 0, 3], [3, 4, 2], [5, 0, 1], [6, 2, 3],
+  [7, 5, 1], [8, 1, 2], [9, 4, 3], [10, 0, 2], [11, 3, 1], [4, 6, 3],
+  [0, 5, 3], [10, 6, 1], [2, 6, 2], [7, 3, 2],
+];
+---
+
+<section class="hub" data-scroll-scene aria-label={copy.caption}>
+  <div class="hub__tiles" aria-hidden="true">
+    {tiles.map(([x, y, tone]) => <span class={`hub__tile t${tone}`} style={`--x:${x};--y:${y}`}></span>)}
+  </div>
+
+  <div class="hub__window">
+    <div class="hub__bar" aria-hidden="true">
+      <span class="hub__logo"></span>
+      <span class="hub__url">rubensanchez.dev{lang === 'en' ? '/en/experience' : '/experiencia'}</span>
+    </div>
+
+    <div class="hub__cards">
+      {
+        copy.cards.map((card, index) => (
+          <article class="hub-card" style={`--i:${index}`}>
+            <PixelArt rows={icons[card.icon]} palette={palette} size={48} />
+            <h3>{card.title}</h3>
+            <p>{card.text}</p>
+            <ul>
+              {card.points.map((point) => (
+                <li>
+                  <a href={`#${card.target}`} data-hub-link>
+                    {point}
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hub {
+    --scene-progress: 1;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(2.5rem, 7vw, 6rem) clamp(1rem, 6vw, 6rem);
+    margin-bottom: var(--space-3xl);
+    background-color: #ff5100;
+    background-image:
+      linear-gradient(to right, #ffffff2e 1px, transparent 1px),
+      linear-gradient(to bottom, #ffffff2e 1px, transparent 1px);
+    background-size: 8.3333% 14.2857%;
+  }
+
+  .hub__tiles {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .hub__tile {
+    position: absolute;
+    left: calc(var(--x) * 8.3333%);
+    top: calc(var(--y) * 14.2857%);
+    width: 8.3333%;
+    height: 14.2857%;
+  }
+
+  .hub__tile.t1 { background: #ff7a2e; }
+  .hub__tile.t2 { background: #e84400; }
+  .hub__tile.t3 { background: #ff9a52; }
+
+  .hub__window {
+    position: relative;
+    max-width: 1040px;
+    margin: 0 auto;
+    border: 1px solid #00000033;
+    border-radius: 6px;
+    background: linear-gradient(160deg, #2a1206 0%, #551f02 55%, #3a1603 100%);
+    box-shadow: 0 30px 60px -30px #4a1a00;
+    transform: scale(calc(0.94 + var(--scene-progress) * 0.06));
+    transform-origin: 50% 100%;
+  }
+
+  .hub__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 34px;
+    padding: 0 0.75rem;
+    border-radius: 6px 6px 0 0;
+    background: #151515;
+  }
+
+  .hub__logo {
+    width: 14px;
+    height: 14px;
+    background: #ff5100;
+    clip-path: polygon(0 0, 35% 0, 35% 35%, 65% 35%, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 65%, 35% 65%, 35% 100%, 0 100%);
+  }
+
+  .hub__url {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: #8d8d93;
+  }
+
+  .hub__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 4vw, 3rem);
+  }
+
+  .hub-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1.5rem 1rem;
+    border-radius: 4px;
+    background: #fbfaf8;
+    color: #151515;
+    box-shadow: 0 1px 0 #ffffff inset, 0 12px 28px -18px #000000aa;
+    opacity: calc(var(--scene-progress) * 1.6 - var(--i) * 0.3);
+    transform: translateY(calc((1 - var(--scene-progress)) * (40px + var(--i) * 30px)));
+    transition: box-shadow 0.35s var(--ease-out), translate 0.35s var(--ease-out);
+  }
+
+  .hub-card:hover {
+    translate: 0 -6px;
+    box-shadow: 0 1px 0 #ffffff inset, 8px 10px 0 #151515;
+  }
+
+  .hub-card :global(.pixel-art) {
+    margin-bottom: 1.25rem;
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .hub-card:hover :global(.pixel-art) {
+    transform: translateY(-3px) rotate(-4deg);
+  }
+
+  .hub-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #151515;
+  }
+
+  .hub-card p {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #5b5b60;
+  }
+
+  .hub-card ul {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0;
+    padding-top: 1.25rem;
+  }
+
+  .hub-card a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid #ececef;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #151515;
+  }
+
+  .hub-card a span {
+    color: #ff5100;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .hub-card a:hover span,
+  .hub-card a:focus-visible span {
+    transform: translateX(4px);
+  }
+
+  .hub-card a:focus-visible {
+    outline: 2px solid #ff5100;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 820px) {
+    .hub {
+      padding: 1.25rem;
+    }
+
+    .hub__window {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .hub__bar {
+      display: none;
+    }
+
+    .hub__cards {
+      grid-template-columns: 1fr;
+      padding: 0;
+    }
+
+    .hub-card {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hub__window,
+    .hub-card {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  // Las flechas llevan a su etapa en la línea de tiempo y la despliegan.
+  let controller: AbortController | undefined;
+
+  function setup(): void {
+    controller?.abort();
+    controller = new AbortController();
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-hub-link]').forEach((link) => {
+      link.addEventListener(
+        'click',
+        (event) => {
+          const target = document.getElementById(link.hash.slice(1));
+          if (!target) return;
+          event.preventDefault();
+          target.querySelector('details')?.setAttribute('open', '');
+          const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          history.replaceState(history.state, '', link.hash);
+        },
+        { signal: controller!.signal },
+      );
+    });
+  }
+
+  document.addEventListener('astro:page-load', setup);
+</script>

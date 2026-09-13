@@ -1,0 +1,39 @@
+---
+/**
+ * Pixel art a varios colores: cada fila es un string y cada carácter una
+ * entrada de la paleta ('.' es transparente). Complementa a PixelIcon, que
+ * es de 8x8 y monocromo.
+ */
+interface Props {
+  rows: readonly string[];
+  palette: Readonly<Record<string, string>>;
+  /** Lado en px; múltiplo del ancho de la rejilla para píxeles enteros. */
+  size?: number;
+  class?: string;
+}
+
+const { rows, palette, size = 48, class: className } = Astro.props;
+const columns = rows[0]?.length ?? 0;
+const cells = rows.flatMap((row, y) =>
+  [...row].flatMap((char, x) => (palette[char] ? [{ x, y, fill: palette[char] }] : [])),
+);
+---
+
+<svg
+  class:list={['pixel-art', className]}
+  width={size}
+  height={(size / columns) * rows.length}
+  viewBox={`0 0 ${columns} ${rows.length}`}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  {cells.map((cell) => <rect x={cell.x} y={cell.y} width="1" height="1" fill={cell.fill} />)}
+</svg>
+
+<style>
+  .pixel-art {
+    display: block;
+    flex: none;
+    image-rendering: pixelated;
+  }
+</style>

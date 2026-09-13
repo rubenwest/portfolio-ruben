@@ -1,6 +1,8 @@
 import type { Lang } from '../i18n';
 
 export interface ExperienceEntry {
+  /** Ancla en la línea de tiempo; el hub de experiencia enlaza aquí. */
+  id: string;
   role: string;
   company: string;
   location: string;
@@ -18,6 +20,7 @@ export interface ExperienceEntry {
 export const experience: Record<Lang, ExperienceEntry[]> = {
   es: [
     {
+      id: 'xp-ayesa',
       role: 'Frontend Engineer & Tech Lead',
       company: 'Ayesa Ibermática',
       location: 'España',
@@ -35,6 +38,7 @@ export const experience: Record<Lang, ExperienceEntry[]> = {
       tags: ['Angular 20+', 'Microfrontends', 'TypeScript', 'Tech Lead'],
     },
     {
+      id: 'xp-twenix',
       role: 'Frontend Engineer',
       company: 'Twenix',
       location: 'España',
@@ -50,6 +54,7 @@ export const experience: Record<Lang, ExperienceEntry[]> = {
       tags: ['Angular', 'RxJS', 'Cypress', 'Jest'],
     },
     {
+      id: 'xp-viewnext',
       role: 'Backend Engineer',
       company: 'Viewnext / Tecnocom',
       location: 'España',
@@ -66,6 +71,7 @@ export const experience: Record<Lang, ExperienceEntry[]> = {
   ],
   en: [
     {
+      id: 'xp-ayesa',
       role: 'Frontend Engineer & Tech Lead',
       company: 'Ayesa Ibermática',
       location: 'Spain',
@@ -83,6 +89,7 @@ export const experience: Record<Lang, ExperienceEntry[]> = {
       tags: ['Angular 20+', 'Microfrontends', 'TypeScript', 'Tech Lead'],
     },
     {
+      id: 'xp-twenix',
       role: 'Frontend Engineer',
       company: 'Twenix',
       location: 'Spain',
@@ -98,6 +105,7 @@ export const experience: Record<Lang, ExperienceEntry[]> = {
       tags: ['Angular', 'RxJS', 'Cypress', 'Jest'],
     },
     {
+      id: 'xp-viewnext',
       role: 'Backend Engineer',
       company: 'Viewnext / Tecnocom',
       location: 'Spain',

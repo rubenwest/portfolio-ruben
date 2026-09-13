@@ -3,6 +3,7 @@ import Page from '../layouts/Page.astro';
 import Hero from '../components/hero/Hero.astro';
 import TechMarquee from '../components/marquee/TechMarquee.astro';
 import PortalCard from '../components/cards/PortalCard.astro';
+import PortraitReveal from '../components/cta/PortraitReveal.astro';
 import { marqueeItems } from '../content/stack';
 import { site } from '../content/site';
 import { getLang, navigation, ui } from '../i18n';
@@ -16,6 +17,8 @@ const copy = {
     lead: 'Cómo pienso, con qué construyo y lo que he aprendido por el camino.',
     ctaEyebrow: 'El siguiente proyecto',
     ctaTitle: ['¿Montamos algo', 'que aguante?'],
+    ctaLead: 'Escríbeme y lo hablamos con calma.',
+    portraitAlt: 'Rubén Sánchez sonriendo, sentado en un sofá chester marrón.',
   },
   en: {
     descriptions: ['From idea to production. Architecture, AI agents and care for the details.', 'The tools I use and why I picked them.', 'From banking systems to leading frontend teams.', 'What I learn, I share, outside of work too.'],
@@ -24,6 +27,8 @@ const copy = {
     lead: "How I think, what I build with and what I've learned along the way.",
     ctaEyebrow: 'Your next project',
     ctaTitle: ['Shall we build', 'something that lasts?'],
+    ctaLead: 'Drop me a line and we can talk it through.',
+    portraitAlt: 'Rubén Sánchez smiling, sitting on a brown chesterfield sofa.',
   },
 }[lang];
 ---
@@ -34,5 +39,15 @@ const copy = {
     <header class="section__head" data-reveal><p class="eyebrow">{copy.eyebrow}</p><h2>{copy.title[0]}<br />{copy.title[1]}</h2><p class="lead">{copy.lead}</p></header>
     <div class="portal-grid">{navigation(lang).map((item,index)=><PortalCard title={item.label} href={item.href} description={copy.descriptions[index]!} index={index} />)}</div>
   </section>
-  <section class="section cta"><div class="container cta__inner"><p class="eyebrow">{copy.ctaEyebrow}</p><h2>{copy.ctaTitle[0]}<br />{copy.ctaTitle[1]}</h2><a class="btn-cta" href={`mailto:${site.email}`}>{ui[lang].cta} ↗</a></div></section>
+  <section class="section cta cta--portrait">
+    <div class="container cta__inner cta__inner--portrait">
+      <div class="cta__copy">
+        <p class="eyebrow">{copy.ctaEyebrow}</p>
+        <h2>{copy.ctaTitle[0]}<br />{copy.ctaTitle[1]}</h2>
+        <p class="lead">{copy.ctaLead}</p>
+        <a class="btn-cta" href={`mailto:${site.email}`}>{ui[lang].cta} ↗</a>
+      </div>
+      <PortraitReveal alt={copy.portraitAlt} />
+    </div>
+  </section>
 </Page>

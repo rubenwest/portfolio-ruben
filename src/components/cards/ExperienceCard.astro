@@ -12,7 +12,7 @@ const lang = getLang(Astro.currentLocale);
 const t = ui[lang];
 ---
 
-<article class:list={['xp', { 'is-compact': !entry.highlight }]}>
+<article id={entry.id} class:list={['xp', { 'is-compact': !entry.highlight }]}>
   <details open={entry.highlight}>
     <summary class="xp__summary">
       <div class="xp__head">

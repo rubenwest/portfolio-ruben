@@ -1,6 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 import FlipStackCard from '../components/cards/FlipStackCard.astro';
+import StackMap from '../components/stack/StackMap.astro';
 import { stack } from '../content/stack';
 import { getLang, ui } from '../i18n';
 
@@ -32,6 +33,7 @@ const copy = {
         {stack[lang].map((category,index)=><FlipStackCard category={category} index={index}/>)}
       </div>
       <p class="stack-caption">{copy.caption}</p>
+      <StackMap />
     </div>
   </section>
 </Page>
