@@ -26,8 +26,9 @@ const shared = {
     year: '2026',
     icon: 'bolt',
     featured: true,
-    tags: ['Node 20', 'GTFS-Realtime', 'Datos', 'JavaScript'],
+    tags: ['Node 20', 'GTFS-Realtime', 'Supabase', 'Datos'],
     repo: 'https://github.com/rubenwest/dublin-bus',
+    demo: 'https://rubenwest.github.io/dublin-bus/',
   },
   zyra: {
     id: 'zyra',
