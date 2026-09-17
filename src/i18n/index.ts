@@ -14,14 +14,15 @@ export const routes = {
   home: { es: withBase('/'), en: withBase('/en/') },
   work: { es: withBase('/como-trabajo/'), en: withBase('/en/how-i-work/') },
   stack: { es: withBase('/stack/'), en: withBase('/en/stack/') },
+  projects: { es: withBase('/proyectos/'), en: withBase('/en/projects/') },
   experience: { es: withBase('/experiencia/'), en: withBase('/en/experience/') },
   community: { es: withBase('/comunidad/'), en: withBase('/en/community/') },
 };
 
 export type RouteKey = keyof typeof routes;
 
-/** Orden de las secciones en la navegación. */
-export const sectionKeys = ['work', 'stack', 'experience', 'community'] as const;
+/** Orden de las secciones en la navegación. Lo comparte PortalCard: si cambia el orden, cambia su arte. */
+export const sectionKeys = ['work', 'stack', 'projects', 'experience', 'community'] as const;
 
 export function getLang(locale: string | undefined): Lang {
   return locale === 'en' ? 'en' : 'es';
@@ -57,7 +58,8 @@ export const ui = {
     current: 'Actual',
     showMore: 'Ver más',
     showLess: 'Ocultar detalle',
-    nav: { work: 'Cómo trabajo', stack: 'Stack', experience: 'Experiencia', community: 'Comunidad' },
+    nav: { work: 'Cómo trabajo', stack: 'Stack', projects: 'Proyectos', experience: 'Experiencia', community: 'Comunidad' },
+    project: { code: 'Ver código', demo: 'Ver en vivo', private: 'Código privado', featured: 'Destacado' },
   },
   en: {
     skipLink: 'Skip to content',
@@ -73,7 +75,8 @@ export const ui = {
     current: 'Current',
     showMore: 'Show more',
     showLess: 'Hide details',
-    nav: { work: 'How I work', stack: 'Stack', experience: 'Experience', community: 'Community' },
+    nav: { work: 'How I work', stack: 'Stack', projects: 'Projects', experience: 'Experience', community: 'Community' },
+    project: { code: 'View code', demo: 'See it live', private: 'Private repo', featured: 'Featured' },
   },
 } as const;
 

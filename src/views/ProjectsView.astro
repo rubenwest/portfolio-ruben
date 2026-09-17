@@ -1,0 +1,79 @@
+---
+import Page from '../layouts/Page.astro';
+import PixelIcon from '../components/pixel-icons/PixelIcon.astro';
+import { projects } from '../content/projects';
+import { getLang, ui } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = ui[lang];
+const copy = {
+  es: {
+    eyebrow: 'Proyectos / lo que construyo por mi cuenta',
+    title: ['Fuera del trabajo', 'también construyo.'],
+    lead: 'Proyectos propios y encargos pequeños, todos del último año. Algunos tienen el código abierto; otros solo la web, pero te los enseño encantado en una llamada.',
+    caption: `0${projects.es.length} proyectos · El mismo criterio que aplico en el trabajo`,
+  },
+  en: {
+    eyebrow: 'Projects / what I build on my own',
+    title: ['Outside work', 'I keep building.'],
+    lead: 'My own projects and small commissions, all from the past year. Some are open source; for the others I can only show the site here, but I am happy to walk you through the code on a call.',
+    caption: `0${projects.en.length} projects · Held to the standard I use at work`,
+  },
+}[lang];
+
+const items = projects[lang];
+---
+<Page title={t.nav.projects}>
+  <section class="section" id="proyectos">
+    <div class="container">
+      <header class="section__head" data-reveal>
+        <p class="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.title[0]}<br />{copy.title[1]}</h1>
+        <p class="lead">{copy.lead}</p>
+      </header>
+
+      <div class="project-grid">
+        {items.map((project) => (
+          <article
+            class:list={['project-card', { 'project-card--featured': project.featured }]}
+            id={project.id}
+            data-reveal
+            data-motion-card
+          >
+            <div class="project-card__head">
+              <span class="project-card__icon"><PixelIcon name={project.icon} size={32} /></span>
+              <span class="project-card__meta">
+                {project.featured && <span class="project-card__badge">{t.project.featured}</span>}
+                <span>{project.year}</span>
+              </span>
+            </div>
+
+            <h2>{project.name}</h2>
+            <p class="project-card__tagline">{project.tagline}</p>
+            <p class="project-card__body">{project.body}</p>
+
+            <ul class="project-card__tags">
+              {project.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+
+            <div class="project-card__links">
+              {project.repo && (
+                <a class="project-card__link" href={project.repo} target="_blank" rel="noopener noreferrer">
+                  {t.project.code} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              {project.demo && (
+                <a class="project-card__link" href={project.demo} target="_blank" rel="noopener noreferrer">
+                  {t.project.demo} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              {!project.repo && <span class="project-card__private">{t.project.private}</span>}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="stack-caption">{copy.caption}</p>
+    </div>
+  </section>
+</Page>

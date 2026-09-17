@@ -3,15 +3,16 @@ interface Props { title: string; href: string; description: string; index: numbe
 import { getLang, ui } from '../../i18n';
 const { title, href, description, index } = Astro.props;
 const lang = getLang(Astro.currentLocale);
+// Un juego de etiquetas por sección, en el orden de `sectionKeys`.
 const labels = lang === 'en'
-  ? [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['2011', '2021', 'TODAY'], ['LEARN', 'SHARE', 'CONNECT']]
-  : [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['2011', '2021', 'HOY'], ['APRENDER', 'COMPARTIR', 'CONECTAR']];
+  ? [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['NIGHTS', 'WEEKENDS', 'LIVE'], ['2011', '2021', 'TODAY'], ['LEARN', 'SHARE', 'CONNECT']]
+  : [['IDEA', 'BUILD', 'SHIP'], ['ANGULAR', 'TYPESCRIPT', 'ASTRO'], ['NOCHES', 'FINDES', 'LIVE'], ['2011', '2021', 'HOY'], ['APRENDER', 'COMPARTIR', 'CONECTAR']];
 ---
 <a class={`portal-card portal-card--${index}`} href={href} data-motion-card>
-  <div class="portal-card__top"><span>0{index + 1} / {['PROCESS', 'TOOLKIT', 'JOURNEY', 'PEOPLE'][index]}</span><span class="portal-card__arrow" aria-hidden="true">↗</span></div>
+  <div class="portal-card__top"><span>0{index + 1} / {['PROCESS', 'TOOLKIT', 'WORK', 'JOURNEY', 'PEOPLE'][index]}</span><span class="portal-card__arrow" aria-hidden="true">↗</span></div>
   <div class="portal-art" aria-hidden="true">
     <div class="portal-art__grid"></div>
-    {labels[index]!.map((label,i)=><div class={`art-panel art-panel--${i}`}><span class="art-panel__dot"></span><span>{label}</span><div class="art-panel__lines"><i/><i/><i/></div><span class="art-panel__symbol">{['⌘','⌁','↗','✳'][index]}</span></div>)}
+    {labels[index]!.map((label,i)=><div class={`art-panel art-panel--${i}`}><span class="art-panel__dot"></span><span>{label}</span><div class="art-panel__lines"><i/><i/><i/></div><span class="art-panel__symbol">{['⌘','⌁','◆','↗','✳'][index]}</span></div>)}
     <span class="art-orbit"></span>
   </div>
   <div class="portal-card__copy"><h3>{title}</h3><p>{description}</p><span class="portal-card__link">{ui[lang].explore} <span aria-hidden="true">→</span></span></div>
