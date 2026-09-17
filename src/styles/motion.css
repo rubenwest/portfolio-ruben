@@ -9,7 +9,7 @@
 .next-page .eyebrow{grid-column:1/-1}.next-page>span:not(.eyebrow){font-size:clamp(2rem,5vw,4rem);line-height:1.1;letter-spacing:-.04em}.next-page>span:last-child{transition:transform .4s;color:var(--color-accent)}.next-page:hover>span:last-child{transform:translate(8px,-8px)}
 .portal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
 .portal-card{position:relative;display:flex;flex-direction:column;isolation:isolate;overflow:hidden;border:1px solid #ffffff18;border-radius:8px;background:#151517;transform:perspective(1200px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transition:transform .5s var(--ease-out),border-color .35s,box-shadow .35s;--card-glow:#ff6b2524}
-.portal-card::before,[data-motion-card].stack-card::before,[data-motion-card].project-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(400px circle at var(--pointer-x,50%) var(--pointer-y,50%),var(--card-glow,#ff6b251c),transparent 75%);opacity:0;transition:opacity .4s;z-index:-1}
+.portal-card::before,[data-motion-card].stack-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(400px circle at var(--pointer-x,50%) var(--pointer-y,50%),var(--card-glow,#ff6b251c),transparent 75%);opacity:0;transition:opacity .4s;z-index:-1}
 .portal-card:hover,.portal-card:focus-visible{border-color:#ff824d70;box-shadow:0 20px 60px #0005}.portal-card:hover::before,.portal-card:focus-visible::before{opacity:1}
 .portal-card__top{padding:1.4rem 1.6rem;display:flex;justify-content:space-between;font:10px var(--font-mono);letter-spacing:.12em;color:var(--color-text-dim)}
 .portal-card__arrow{font:22px var(--font-body);transition:transform .4s,color .4s}.portal-card:hover .portal-card__arrow,.portal-card:focus-visible .portal-card__arrow{transform:translate(3px,-3px);color:var(--color-accent)}
@@ -24,7 +24,6 @@
 .portal-card--2:hover .art-panel,.portal-card--2:focus-visible .art-panel{transform:translateX(calc(var(--layer) * 108px)) translateY(calc(var(--layer) * -24px)) rotateY(0)}
 .portal-card--3 .art-panel{width:110px;height:110px;left:calc(50% - 55px);border-radius:50%;transform:translateX(calc(var(--layer) * 82px)) translateY(calc(var(--layer) * var(--layer) * 30px));text-align:center;font-size:8px;padding-top:24px}
 .portal-card--3 .art-panel__lines{display:none}.portal-card--3 .art-panel__symbol{right:35px;bottom:10px}.portal-card--3:hover .art-panel,.portal-card--3:focus-visible .art-panel{transform:translateX(calc(var(--layer) * 100px)) translateY(calc(var(--layer) * var(--layer) * 10px))}
-.project-card:hover::before,.project-card:focus-within::before{opacity:1}
 /* La quinta card cerraría sola una fila de dos columnas: ocupa el ancho entero. */
 .portal-card--4{grid-column:1/-1}
 .portal-card--4 .portal-art{height:210px}

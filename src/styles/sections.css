@@ -144,62 +144,54 @@
   }
 
   /* ---- proyectos ---- */
+  /* Las tarjetas comparten la mecánica de volteo de las del stack (.flip-card). */
   .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--space-lg);
-    align-items: start;
+    align-items: stretch;
   }
 
-  .project-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    display: grid;
-    gap: var(--space-sm);
-    align-content: start;
-    padding: clamp(1.5rem, 3vw, 2.25rem);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-surface);
-    --card-glow: rgba(255, 81, 0, 0.13);
-    transition:
-      transform var(--dur-base) var(--ease-out),
-      border-color var(--dur-base) var(--ease-out),
-      box-shadow var(--dur-base) var(--ease-out);
+  /* Doble clase: gana a la altura al 100% que .flip-card trae del stack. */
+  .project-card.flip-card {
+    height: 380px;
+    perspective: 1000px;
   }
 
-  .project-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--color-border-strong);
-    box-shadow: var(--shadow-md);
-  }
-
-  /* El destacado abre la fila entera y sube el tamaño del titular. */
-  .project-card--featured {
+  /* El destacado abre la fila entera. */
+  .project-card--featured.flip-card {
     grid-column: 1 / -1;
+    height: 340px;
+  }
+
+  .project-card .flip-card__front,
+  .project-card .flip-card__back {
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    border-radius: 8px;
+  }
+
+  .project-card .flip-card__front {
+    gap: var(--space-md);
     background: linear-gradient(140deg, var(--color-surface-2), var(--color-surface));
   }
 
-  .project-card--featured h2 {
-    font-size: var(--fs-h2);
+  /* El reverso es para leer: fondo oscuro y el color solo en el canto y el titular. */
+  .project-card .flip-card__back {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-sm);
+    overflow: auto;
+    background: var(--color-surface);
+    border-left: 3px solid var(--flip-color);
+    color: var(--color-text);
   }
 
-  .project-card--featured .project-card__tagline {
-    max-width: 42ch;
-    font-size: 1.05rem;
-  }
-
-  .project-card--featured .project-card__body {
-    max-width: 68ch;
-  }
-
-  .project-card__head {
+  .project-face__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    margin-bottom: var(--space-2xs);
   }
 
   .project-card__icon {
@@ -208,7 +200,9 @@
     display: grid;
     place-items: center;
     border-radius: var(--radius-sm);
-    background: var(--color-accent-soft);
+    background: color-mix(in srgb, var(--flip-color) 20%, transparent);
+    /* El icono de píxeles toma el color de la tarjeta. */
+    --pixel-2: var(--flip-color);
     transition: transform var(--dur-slow) var(--ease-out);
   }
 
@@ -228,23 +222,45 @@
 
   .project-card__badge {
     padding: 3px 8px;
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--flip-color);
     border-radius: var(--radius-sm);
-    color: var(--color-accent);
+    color: var(--flip-color);
     text-transform: uppercase;
+  }
+
+  /* El titular se apoya en la base de la cara frontal. */
+  .project-face__title {
+    margin-top: auto;
   }
 
   .project-card h2 {
     font-size: var(--fs-h3);
   }
 
-  .project-card__tagline {
-    color: var(--color-text);
+  .project-card--featured h2 {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
   }
 
-  .project-card__body {
+  .project-card__tagline {
+    margin-top: var(--space-xs);
     color: var(--color-text-muted);
     font-size: var(--fs-small);
+    max-width: 46ch;
+  }
+
+  .project-card .flip-card__back h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--flip-color);
+  }
+
+  .project-face__body {
+    color: var(--color-text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .project-card--featured .project-face__body {
+    max-width: 68ch;
   }
 
   .project-card__tags {
@@ -252,7 +268,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs);
-    margin: var(--space-2xs) 0 0;
+    margin: 0;
     padding: 0;
   }
 
@@ -270,7 +286,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-md);
-    margin-top: var(--space-xs);
+    margin-top: auto;
     padding-top: var(--space-md);
     border-top: 1px solid var(--color-border);
     font-family: var(--font-mono);
@@ -278,7 +294,7 @@
   }
 
   .project-card__link {
-    color: var(--color-accent-2);
+    color: var(--flip-color);
   }
 
   .project-card__link span {
@@ -296,6 +312,26 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-text-dim);
+  }
+
+  /* El disparador cubre la tarjeta entera y taparía los enlaces del reverso
+     (el rotor 3D crea su propio contexto de apilado, así que no basta con
+     subirlos de z-index). Se queda solo para teclado y lectores: el clic lo
+     gestiona la tarjeta. */
+  .project-card .flip-card__trigger {
+    pointer-events: none;
+  }
+
+  /* Sin JS las dos caras se apilan y todo queda legible. */
+  .project-card.flip-card:not(.is-enhanced) {
+    height: auto;
+  }
+
+  @media (max-width: 720px) {
+    .project-card.flip-card,
+    .project-card--featured.flip-card {
+      height: 420px;
+    }
   }
 
   /* ---- timeline ---- */

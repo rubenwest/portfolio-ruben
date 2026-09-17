@@ -1,0 +1,70 @@
+---
+import PixelIcon from '../pixel-icons/PixelIcon.astro';
+import type { Project } from '../../content/projects';
+import { getLang, ui } from '../../i18n';
+
+interface Props { project: Project; index: number; }
+const { project, index } = Astro.props;
+const t = ui[getLang(Astro.currentLocale)];
+
+// Mismo juego de color que las tarjetas del stack, rotando por posición.
+const colors = ['#ff5100', '#159bd7', '#ffc043', '#ed663b'];
+---
+<article
+  class:list={['project-card', 'flip-card', { 'project-card--featured': project.featured }]}
+  id={project.id}
+  style={`--flip-color:${colors[index % colors.length]}`}
+  data-flip-card
+  data-reveal
+>
+  <div class="flip-card__rotor">
+    <div class="flip-card__front project-face" data-flip-front>
+      <header class="project-face__head">
+        <span class="project-card__icon"><PixelIcon name={project.icon} size={32} /></span>
+        <span class="project-card__meta">
+          {project.featured && <span class="project-card__badge">{t.project.featured}</span>}
+          <span>{project.year}</span>
+        </span>
+      </header>
+
+      <div class="project-face__title">
+        <h2>{project.name}</h2>
+        <p class="project-card__tagline">{project.tagline}</p>
+      </div>
+
+      <ul class="project-card__tags">
+        {project.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+
+      <span class="flip-card__hint" aria-hidden="true">{t.project.more} +</span>
+    </div>
+
+    <div class="flip-card__back project-face" data-flip-back id={`project-${project.id}`}>
+      <h3>{project.name}</h3>
+      <p class="project-face__body">{project.body}</p>
+
+      <div class="project-card__links">
+        {project.repo && (
+          <a class="project-card__link" href={project.repo} target="_blank" rel="noopener noreferrer">
+            {t.project.code} <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        {project.demo && (
+          <a class="project-card__link" href={project.demo} target="_blank" rel="noopener noreferrer">
+            {t.project.demo} <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        {!project.repo && <span class="project-card__private">{t.project.private}</span>}
+      </div>
+    </div>
+  </div>
+
+  <button
+    class="flip-card__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls={`project-${project.id}`}
+  >
+    <span class="visually-hidden">{t.project.more}: {project.name}</span>
+  </button>
+</article>

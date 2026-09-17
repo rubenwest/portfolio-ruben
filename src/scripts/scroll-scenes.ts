@@ -15,14 +15,30 @@ function initScenes() {
       button.setAttribute('aria-expanded', String(open));
       front.setAttribute('aria-hidden', String(open));
       back.setAttribute('aria-hidden', String(!open));
+      // La cara oculta queda inerte: sus enlaces no se tabulan ni se anuncian.
+      front.inert = open;
+      back.inert = !open;
     };
     card.classList.add('is-enhanced');
     show(false);
     card.addEventListener('pointerenter', () => {if(hover.matches) show(true);}, {signal});
     card.addEventListener('pointerleave', () => {if(!pinned) show(false);}, {signal});
-    button.addEventListener('click', () => {pinned = !pinned;show(pinned);}, {signal});
-    button.addEventListener('keydown', event => {if(event.key === 'Escape'){pinned=false;show(false);}}, {signal});
-    button.addEventListener('blur', () => {pinned=false;show(false);}, {signal});
+    // El clic se escucha en la tarjeta, no en el botón: así el disparador puede
+    // dejar pasar el ratón y los enlaces del reverso siguen siendo pulsables.
+    card.addEventListener('click', event => {
+      if((event.target as Element).closest('a')) return;
+      pinned = !pinned;
+      show(pinned);
+    }, {signal});
+    // Con teclado, enfocar la tarjeta la abre; así se llega a los enlaces del reverso.
+    button.addEventListener('focus', () => show(true), {signal});
+    card.addEventListener('keydown', event => {if(event.key === 'Escape'){pinned=false;show(false);button.focus();}}, {signal});
+    // Solo se cierra cuando el foco sale de la tarjeta, no al saltar a un enlace del reverso.
+    card.addEventListener('focusout', event => {
+      if(card.contains(event.relatedTarget as Node | null)) return;
+      pinned = false;
+      show(false);
+    }, {signal});
   });
   const scenes = Array.from(document.querySelectorAll<HTMLElement>('[data-scroll-scene], #como-trabajo .diagram'));
   const visible = new Set<HTMLElement>();

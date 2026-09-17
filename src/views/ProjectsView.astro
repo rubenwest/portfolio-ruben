@@ -1,6 +1,6 @@
 ---
 import Page from '../layouts/Page.astro';
-import PixelIcon from '../components/pixel-icons/PixelIcon.astro';
+import FlipProjectCard from '../components/cards/FlipProjectCard.astro';
 import { projects } from '../content/projects';
 import { getLang, ui } from '../i18n';
 
@@ -33,44 +33,7 @@ const items = projects[lang];
       </header>
 
       <div class="project-grid">
-        {items.map((project) => (
-          <article
-            class:list={['project-card', { 'project-card--featured': project.featured }]}
-            id={project.id}
-            data-reveal
-            data-motion-card
-          >
-            <div class="project-card__head">
-              <span class="project-card__icon"><PixelIcon name={project.icon} size={32} /></span>
-              <span class="project-card__meta">
-                {project.featured && <span class="project-card__badge">{t.project.featured}</span>}
-                <span>{project.year}</span>
-              </span>
-            </div>
-
-            <h2>{project.name}</h2>
-            <p class="project-card__tagline">{project.tagline}</p>
-            <p class="project-card__body">{project.body}</p>
-
-            <ul class="project-card__tags">
-              {project.tags.map((tag) => <li>{tag}</li>)}
-            </ul>
-
-            <div class="project-card__links">
-              {project.repo && (
-                <a class="project-card__link" href={project.repo} target="_blank" rel="noopener noreferrer">
-                  {t.project.code} <span aria-hidden="true">↗</span>
-                </a>
-              )}
-              {project.demo && (
-                <a class="project-card__link" href={project.demo} target="_blank" rel="noopener noreferrer">
-                  {t.project.demo} <span aria-hidden="true">↗</span>
-                </a>
-              )}
-              {!project.repo && <span class="project-card__private">{t.project.private}</span>}
-            </div>
-          </article>
-        ))}
+        {items.map((project, index) => <FlipProjectCard project={project} index={index} />)}
       </div>
 
       <p class="stack-caption">{copy.caption}</p>

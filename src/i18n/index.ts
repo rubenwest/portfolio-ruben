@@ -59,7 +59,7 @@ export const ui = {
     showMore: 'Ver más',
     showLess: 'Ocultar detalle',
     nav: { work: 'Cómo trabajo', stack: 'Stack', projects: 'Proyectos', experience: 'Experiencia', community: 'Comunidad' },
-    project: { code: 'Ver código', demo: 'Ver en vivo', private: 'Código privado', featured: 'Destacado' },
+    project: { code: 'Ver código', demo: 'Ver en vivo', private: 'Código privado', featured: 'Destacado', more: 'Ver detalle' },
   },
   en: {
     skipLink: 'Skip to content',
@@ -76,7 +76,7 @@ export const ui = {
     showMore: 'Show more',
     showLess: 'Hide details',
     nav: { work: 'How I work', stack: 'Stack', projects: 'Projects', experience: 'Experience', community: 'Community' },
-    project: { code: 'View code', demo: 'See it live', private: 'Private repo', featured: 'Featured' },
+    project: { code: 'View code', demo: 'See it live', private: 'Private repo', featured: 'Featured', more: 'See details' },
   },
 } as const;
 
