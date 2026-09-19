@@ -155,13 +155,31 @@
   /* Doble clase: gana a la altura al 100% que .flip-card trae del stack. */
   .project-card.flip-card {
     height: 380px;
-    perspective: 1000px;
+    perspective: 2400px;
   }
 
-  /* El destacado abre la fila entera. */
+  /* El destacado abre la fila entera; con lo ancho que es, necesita más
+     perspectiva para que el giro no se deforme. */
   .project-card--featured.flip-card {
     grid-column: 1 / -1;
     height: 340px;
+    perspective: 4000px;
+  }
+
+  /* Giro más suave que el del stack: entra y sale con calma, y el pequeño
+     retardo evita que la tarjeta se voltee al pasar el ratón por encima. */
+  .project-card .flip-card__rotor {
+    transition: transform 1s cubic-bezier(0.45, 0.05, 0.25, 1);
+  }
+
+  .project-card.is-flipped .flip-card__rotor {
+    transition-delay: 0.12s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-card .flip-card__rotor {
+      transition: none;
+    }
   }
 
   .project-card .flip-card__front,
